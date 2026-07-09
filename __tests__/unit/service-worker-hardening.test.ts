@@ -18,7 +18,20 @@ describe("service worker hardening", () => {
 		expect(serviceWorkerSource).toContain("PAGE_METADATA_CACHE");
 		expect(serviceWorkerSource).toContain("CACHE_PREFIX");
 		expect(serviceWorkerSource).toContain("cacheNavigationSnapshot");
+		expect(serviceWorkerSource).toContain(
+			"const cacheKey = createRequest(request.url)",
+		);
 		expect(serviceWorkerSource).toContain("getCoherentCachedNavigation");
+		expect(serviceWorkerSource).toContain("getCachedNavigationSnapshot");
+		expect(serviceWorkerSource).toContain(
+			'caches.match(getScopedUrl("/"),',
+		);
+		expect(serviceWorkerSource).toContain(
+			"pageCache.match(candidate.url, { ignoreVary: true })",
+		);
+		expect(serviceWorkerSource).toContain(
+			"cache.match(assetUrl, { ignoreVary: true })",
+		);
 		expect(serviceWorkerSource).toContain(
 			"hasCachedStaticAssets(metadata.assetUrls)",
 		);
@@ -27,6 +40,9 @@ describe("service worker hardening", () => {
 	});
 
 	it("seeds offline page snapshots after client-side URL changes", () => {
+		expect(serviceWorkerSource).toContain(
+			'cacheNavigationUrl(getScopedUrl("/"))',
+		);
 		expect(layoutSource).toContain("ServiceWorkerRegistration");
 		const registrationSource = readFileSync(
 			join(root, "components/ServiceWorkerRegistration.tsx"),

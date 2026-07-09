@@ -12,6 +12,7 @@ import {
 } from "@/features/events/social-proof";
 import type { Event } from "@/features/events/types";
 import { isArchiveModeEnabled } from "@/lib/archive-mode";
+import { log } from "@/lib/platform/logger";
 import { getEventEngagementRepository } from "@/lib/platform/postgres/event-engagement-repository";
 import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { cache } from "react";
@@ -180,12 +181,26 @@ const getLiveEventsForRequest = cache(
 			const normalized = toEventsResult(result);
 			const archiveMode = isArchiveModeEnabled();
 			if (normalized.success && includeFeaturedProjection && !archiveMode) {
-				normalized.data = await applyFeaturedProjectionToEvents(
-					normalized.data,
-				);
-				normalized.data = await applyPromotedProjectionToEvents(
-					normalized.data,
-				);
+				try {
+					normalized.data = await applyFeaturedProjectionToEvents(
+						normalized.data,
+					);
+				} catch (error) {
+					log.warn("events", "Featured projection unavailable", {
+						error: error instanceof Error ? error.message : "unknown",
+						source: normalized.source,
+					});
+				}
+				try {
+					normalized.data = await applyPromotedProjectionToEvents(
+						normalized.data,
+					);
+				} catch (error) {
+					log.warn("events", "Promoted projection unavailable", {
+						error: error instanceof Error ? error.message : "unknown",
+						source: normalized.source,
+					});
+				}
 			}
 			if (normalized.success && includeEngagementProjection && archiveMode) {
 				normalized.data = normalized.data.map((event) => ({
@@ -195,29 +210,41 @@ const getLiveEventsForRequest = cache(
 				}));
 			}
 			if (normalized.success && includeEngagementProjection && !archiveMode) {
-				const eventKeys = normalized.data.map((event) => event.eventKey);
-				const [socialProofSaveCounts, socialProofHistoricalSaveCounts] =
-					await Promise.all([
-						getCachedSocialProofSaveCountEntries(
-							eventKeys,
-							getSocialProofSaveWindowDays(),
-						),
-						getCachedSocialProofSaveCountEntries(
-							eventKeys,
-							CARD_SOCIAL_PROOF_HISTORICAL_WINDOW_DAYS,
-						),
-					]);
-				const socialProofSaveCountMap = new Map(socialProofSaveCounts);
-				const socialProofHistoricalSaveCountMap = new Map(
-					socialProofHistoricalSaveCounts,
-				);
-				normalized.data = normalized.data.map((event) => ({
-					...event,
-					socialProofSaveCount:
-						socialProofSaveCountMap.get(event.eventKey) ?? 0,
-					socialProofHistoricalSaveCount:
-						socialProofHistoricalSaveCountMap.get(event.eventKey) ?? 0,
-				}));
+				try {
+					const eventKeys = normalized.data.map((event) => event.eventKey);
+					const [socialProofSaveCounts, socialProofHistoricalSaveCounts] =
+						await Promise.all([
+							getCachedSocialProofSaveCountEntries(
+								eventKeys,
+								getSocialProofSaveWindowDays(),
+							),
+							getCachedSocialProofSaveCountEntries(
+								eventKeys,
+								CARD_SOCIAL_PROOF_HISTORICAL_WINDOW_DAYS,
+							),
+						]);
+					const socialProofSaveCountMap = new Map(socialProofSaveCounts);
+					const socialProofHistoricalSaveCountMap = new Map(
+						socialProofHistoricalSaveCounts,
+					);
+					normalized.data = normalized.data.map((event) => ({
+						...event,
+						socialProofSaveCount:
+							socialProofSaveCountMap.get(event.eventKey) ?? 0,
+						socialProofHistoricalSaveCount:
+							socialProofHistoricalSaveCountMap.get(event.eventKey) ?? 0,
+					}));
+				} catch (error) {
+					log.warn("events", "Social proof projection unavailable", {
+						error: error instanceof Error ? error.message : "unknown",
+						source: normalized.source,
+					});
+					normalized.data = normalized.data.map((event) => ({
+						...event,
+						socialProofSaveCount: 0,
+						socialProofHistoricalSaveCount: 0,
+					}));
+				}
 			}
 			if (!normalized.success) {
 				metrics.errors += 1;

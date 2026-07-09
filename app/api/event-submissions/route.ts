@@ -22,6 +22,7 @@ import {
 	forbiddenNoStoreResponse,
 	isSameOriginRequest,
 	isWithinBodySizeLimit,
+	readJsonBodyWithinLimit,
 	tooLargeNoStoreResponse,
 } from "@/lib/http/request-security";
 import { NextResponse } from "next/server";
@@ -101,7 +102,10 @@ export async function POST(request: Request) {
 
 	let rawBody: unknown;
 	try {
-		rawBody = await request.json();
+		rawBody = await readJsonBodyWithinLimit(
+			request,
+			EVENT_SUBMISSION_JSON_BODY_LIMIT_BYTES,
+		);
 	} catch {
 		return NextResponse.json(
 			{ success: false, error: "Invalid request payload" },

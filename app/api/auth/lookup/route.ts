@@ -13,6 +13,7 @@ import {
 	isJsonContentType,
 	isSameOriginRequest,
 	isWithinBodySizeLimit,
+	readJsonBodyWithinLimit,
 	tooLargeNoStoreResponse,
 } from "@/lib/http/request-security";
 import { legalPrivacyVersion, legalTermsVersion } from "@/lib/legal";
@@ -127,7 +128,9 @@ export async function POST(request: Request) {
 
 	let body: z.infer<typeof lookupBodySchema>;
 	try {
-		const parsed = lookupBodySchema.safeParse(await request.json());
+		const parsed = lookupBodySchema.safeParse(
+			await readJsonBodyWithinLimit(request, DEFAULT_JSON_BODY_LIMIT_BYTES),
+		);
 		if (!parsed.success) {
 			return NextResponse.json(
 				{ success: false, error: "Invalid request payload" },

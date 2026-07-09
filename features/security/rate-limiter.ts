@@ -4,6 +4,8 @@ import { createHmac } from "crypto";
 import { env } from "@/lib/config/env";
 import { getRateLimitRepository } from "@/lib/platform/postgres/rate-limit-repository";
 
+export { extractClientIpFromHeaders } from "@/lib/http/client-ip";
+
 const AUTH_VERIFY_IP_LIMIT = 60;
 const AUTH_VERIFY_IP_WINDOW_SECONDS = 60;
 const AUTH_VERIFY_EMAIL_IP_LIMIT = 6;
@@ -55,22 +57,6 @@ export interface RateLimitDecision {
 	scope: RateLimitScope;
 	keyHash: string;
 }
-
-export const extractClientIpFromHeaders = (
-	headers: Pick<Headers, "get">,
-): string => {
-	const forwardedFor = headers.get("x-forwarded-for");
-	if (forwardedFor?.trim()) {
-		return forwardedFor.split(",")[0]?.trim() || "unknown";
-	}
-
-	const realIp = headers.get("x-real-ip");
-	if (realIp?.trim()) {
-		return realIp.trim();
-	}
-
-	return "unknown";
-};
 
 export const normalizeRateLimitEmail = (email: string): string =>
 	email.trim().toLowerCase();

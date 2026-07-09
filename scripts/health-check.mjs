@@ -15,39 +15,21 @@ const sql = postgres(databaseUrl, {
 	onnotice: () => {},
 });
 
-const ensureEventTables = async () => {
-	await sql`
-		CREATE TABLE IF NOT EXISTS app_event_store_columns (
-			key TEXT PRIMARY KEY,
-			label TEXT NOT NULL,
-			is_core BOOLEAN NOT NULL,
-			is_required BOOLEAN NOT NULL,
-			display_order INTEGER NOT NULL,
-			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-		)
+const assertRequiredTables = async () => {
+	const rows = await sql`
+		SELECT
+			to_regclass('public.app_kv_store')::text AS app_kv_store,
+			to_regclass('public.app_event_store_columns')::text AS app_event_store_columns,
+			to_regclass('public.app_event_store_rows')::text AS app_event_store_rows,
+			to_regclass('public.app_event_store_meta')::text AS app_event_store_meta
 	`;
-
-	await sql`
-		CREATE TABLE IF NOT EXISTS app_event_store_rows (
-			id TEXT PRIMARY KEY,
-			display_order INTEGER NOT NULL,
-			row_data JSONB NOT NULL,
-			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-		)
-	`;
-
-	await sql`
-		CREATE TABLE IF NOT EXISTS app_event_store_meta (
-			singleton BOOLEAN PRIMARY KEY DEFAULT TRUE,
-			row_count INTEGER NOT NULL DEFAULT 0,
-			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-			updated_by TEXT NOT NULL DEFAULT 'system',
-			origin TEXT NOT NULL DEFAULT 'manual',
-			checksum TEXT NOT NULL DEFAULT ''
-		)
-	`;
+	const status = rows[0] ?? {};
+	const missing = Object.entries(status)
+		.filter(([, value]) => value === null)
+		.map(([name]) => name);
+	if (missing.length > 0) {
+		throw new Error(`Required database tables are missing: ${missing.join(", ")}`);
+	}
 };
 
 const printSection = (title) => {
@@ -58,6 +40,8 @@ const run = async () => {
 	printSection("Postgres Connectivity");
 	await sql`select 1 as ok`;
 	console.log("Postgres connection: OK");
+	await assertRequiredTables();
+	console.log("Required tables: OK");
 
 	printSection("KV Store Keys");
 	const keys = await sql`select key, updated_at from app_kv_store order by key`;
@@ -85,7 +69,6 @@ const run = async () => {
 		console.log(`metadata updatedAt: ${meta.updatedAt}`);
 	}
 
-	await ensureEventTables();
 	printSection("Event Tables Row Counts");
 	const [tableRows, columnRows, tableMetaRows] = await Promise.all([
 		sql`select count(*)::int as count from app_event_store_rows`,

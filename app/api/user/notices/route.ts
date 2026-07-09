@@ -11,6 +11,7 @@ import {
 	isJsonContentType,
 	isSameOriginRequest,
 	isWithinBodySizeLimit,
+	readJsonBodyWithinLimit,
 } from "@/lib/http/request-security";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -100,7 +101,10 @@ export async function POST(request: Request) {
 
 	let payload: unknown;
 	try {
-		payload = await request.json();
+		payload = await readJsonBodyWithinLimit(
+			request,
+			DEFAULT_JSON_BODY_LIMIT_BYTES,
+		);
 	} catch {
 		return NextResponse.json(
 			{ success: false, error: "Invalid JSON" },

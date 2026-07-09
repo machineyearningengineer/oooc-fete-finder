@@ -40,7 +40,7 @@ describe("rate-limiter helpers", () => {
 		vi.clearAllMocks();
 	});
 
-	it("extracts client IP with x-forwarded-for precedence", async () => {
+	it("trusts Railway x-real-ip before caller-supplied forwarding headers", async () => {
 		const { limiter } = await loadLimiter();
 
 		const forwardedHeaders = new Headers({
@@ -50,13 +50,19 @@ describe("rate-limiter helpers", () => {
 		const realIpHeaders = new Headers({
 			"x-real-ip": "203.0.113.33",
 		});
+		const forwardedOnlyHeaders = new Headers({
+			"x-forwarded-for": "198.51.100.44, 10.0.0.1",
+		});
 		const emptyHeaders = new Headers();
 
 		expect(limiter.extractClientIpFromHeaders(forwardedHeaders)).toBe(
-			"198.51.100.15",
+			"203.0.113.22",
 		);
 		expect(limiter.extractClientIpFromHeaders(realIpHeaders)).toBe(
 			"203.0.113.33",
+		);
+		expect(limiter.extractClientIpFromHeaders(forwardedOnlyHeaders)).toBe(
+			"198.51.100.44",
 		);
 		expect(limiter.extractClientIpFromHeaders(emptyHeaders)).toBe("unknown");
 	});

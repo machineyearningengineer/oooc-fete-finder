@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash, randomUUID, timingSafeEqual } from "crypto";
 import { env, isAdminAuthEnabled } from "@/lib/config/env";
+import { extractClientIpFromHeaders } from "@/lib/http/client-ip";
 import { getKVStore } from "@/lib/platform/kv/kv-store-factory";
 import { log } from "@/lib/platform/logger";
 import { getAdminSessionRepository } from "@/lib/platform/postgres/admin-session-repository";
@@ -165,10 +166,7 @@ const getRequestMetadataFromServerContext = async (): Promise<{
 	ua: string;
 }> => {
 	const hdrs = await headers();
-	const ip =
-		hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-		hdrs.get("x-real-ip") ||
-		"unknown";
+	const ip = extractClientIpFromHeaders(hdrs);
 	const ua = hdrs.get("user-agent") || "unknown";
 
 	return { ip, ua };

@@ -10,6 +10,7 @@ import {
 	formatPrice,
 } from "@/features/events/types";
 import { isArchiveModeEnabled } from "@/lib/archive-mode";
+import { extractClientIpFromHeaders } from "@/lib/http/client-ip";
 import { getKVStore } from "@/lib/platform/kv/kv-store-factory";
 import { log } from "@/lib/platform/logger";
 import {
@@ -202,14 +203,6 @@ const STATIC_PRESET_CONTENT: Record<
 	},
 };
 
-const getClientIp = (request: NextRequest): string => {
-	const forwardedFor = request.headers.get("x-forwarded-for");
-	if (forwardedFor?.trim()) {
-		return forwardedFor.split(",")[0]?.trim() || "unknown";
-	}
-	return request.headers.get("x-real-ip")?.trim() || "unknown";
-};
-
 const hashIp = (ip: string): string =>
 	createHash("sha256").update(ip).digest("hex").slice(0, 24);
 
@@ -239,7 +232,7 @@ const isRateLimited = async (request: NextRequest): Promise<boolean> => {
 		return false;
 	}
 
-	const ip = getClientIp(request);
+	const ip = extractClientIpFromHeaders(request.headers);
 	const now = Date.now();
 	const key = `${RATE_LIMIT_KEY_PREFIX}${hashIp(ip)}`;
 

@@ -7,6 +7,7 @@ import {
 	forbiddenNoStoreResponse,
 	isJsonContentType,
 	isWithinBodySizeLimit,
+	readJsonBodyWithinLimit,
 	tooLargeNoStoreResponse,
 } from "@/lib/http/request-security";
 import { NextRequest, NextResponse } from "next/server";
@@ -37,7 +38,10 @@ export async function POST(request: NextRequest) {
 			{ status: 503, headers: NO_STORE_HEADERS },
 		);
 	}
-	const body = (await request.json()) as { listingId?: string };
+	const body = (await readJsonBodyWithinLimit(
+		request,
+		DEFAULT_JSON_BODY_LIMIT_BYTES,
+	)) as { listingId?: string };
 	const listingId = body.listingId?.trim();
 	if (!listingId || listingId.length > 100) {
 		return NextResponse.json(

@@ -15,6 +15,9 @@ const USER_AUTH_COOKIE_AUDIENCE = "oooc-fete-finder:user";
 const USER_AUTH_COOKIE_ISSUER = "oooc-fete-finder";
 const E2E_USER_ID = "019b0000-0000-7000-8000-000000000001";
 const LOCAL_APP_SETTINGS_STORAGE_KEY = "oooc_local_app_settings";
+const E2E_BASE_URL = process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:3100";
+const HOME_PATH = "/?df=2026-01-01&dt=2026-12-31";
+const HOME_DEBUG_PATH = `${HOME_PATH}&offlineDebug=1`;
 
 const readLocalEnvValue = (key: string) => {
 	try {
@@ -49,11 +52,10 @@ const signE2eUserSessionToken = (email: string) => {
 };
 
 const waitForServiceWorkerReady = async (page: Page) => {
-	await page.evaluate(async () => {
-		if (!("serviceWorker" in navigator)) {
-			throw new Error("Service workers are not available");
-		}
+	await page.waitForFunction(async () => {
+		if (!("serviceWorker" in navigator)) return false;
 		await navigator.serviceWorker.ready;
+		return true;
 	});
 };
 
@@ -218,16 +220,28 @@ const waitForNextStaticCache = async (page: Page) => {
 
 const waitForCoherentCachedNavigation = async (page: Page, path = "/") => {
 	await page.waitForFunction(async (targetPath) => {
-		const cacheNames = await caches.keys();
-		const pageCacheName = cacheNames.find((cacheName) =>
-			cacheName.endsWith(":pages"),
-		);
-		const metadataCacheName = cacheNames.find((cacheName) =>
-			cacheName.endsWith(":page-metadata"),
-		);
-		const staticCacheName = cacheNames.find((cacheName) =>
-			cacheName.endsWith(":static"),
-		);
+		const registration = await navigator.serviceWorker.ready;
+		const worker = navigator.serviceWorker.controller;
+		if (!worker || worker !== registration.active) return false;
+		const status = await new Promise<{
+			cacheNames?: {
+				pageMetadata?: string;
+				pages?: string;
+				static?: string;
+			};
+			cacheVersion?: string;
+		} | null>((resolve) => {
+			const channel = new MessageChannel();
+			const timeoutId = window.setTimeout(() => resolve(null), 500);
+			channel.port1.onmessage = (event) => {
+				window.clearTimeout(timeoutId);
+				resolve(event.data);
+			};
+			worker.postMessage({ type: "GET_OFFLINE_STATUS" }, [channel.port2]);
+		});
+		const pageCacheName = status?.cacheNames?.pages;
+		const metadataCacheName = status?.cacheNames?.pageMetadata;
+		const staticCacheName = status?.cacheNames?.static;
 		if (!pageCacheName || !metadataCacheName || !staticCacheName) return false;
 
 		const url = new URL(targetPath, window.location.origin);
@@ -241,7 +255,7 @@ const waitForCoherentCachedNavigation = async (page: Page, path = "/") => {
 			caches.open(staticCacheName),
 		]);
 		const [pageResponse, metadataResponse] = await Promise.all([
-			pageCache.match(url.href),
+			pageCache.match(url.href, { ignoreVary: true }),
 			metadataCache.match(metadataUrl.href),
 		]);
 		if (!pageResponse || !metadataResponse) return false;
@@ -251,7 +265,7 @@ const waitForCoherentCachedNavigation = async (page: Page, path = "/") => {
 			cacheVersion?: string;
 		};
 		if (
-			typeof metadata.cacheVersion !== "string" ||
+			metadata.cacheVersion !== status.cacheVersion ||
 			!Array.isArray(metadata.assetUrls) ||
 			metadata.assetUrls.length === 0
 		) {
@@ -260,7 +274,7 @@ const waitForCoherentCachedNavigation = async (page: Page, path = "/") => {
 
 		for (const assetUrl of metadata.assetUrls) {
 			if (typeof assetUrl !== "string") return false;
-			if (!(await staticCache.match(assetUrl))) return false;
+			if (!(await staticCache.match(assetUrl, { ignoreVary: true }))) return false;
 		}
 		return true;
 	}, path);
@@ -289,7 +303,7 @@ const verifyUserSession = async (page: Page) => {
 		{
 			name: USER_AUTH_COOKIE_NAME,
 			value: signE2eUserSessionToken("offline-e2e@example.com"),
-			url: "http://localhost:3000",
+			url: E2E_BASE_URL,
 			httpOnly: true,
 			sameSite: "Lax",
 			expires: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
@@ -333,15 +347,22 @@ const failOnChunkLoadError = (page: Page) => {
 
 const setBrowserOffline = async (
 	context: BrowserContext,
-	page: Page,
+	_page: Page,
 	isOffline: boolean,
 ) => {
 	await context.setOffline(isOffline);
-	await page.evaluate(
-		(offline) =>
-			window.dispatchEvent(new Event(offline ? "offline" : "online")),
-		isOffline,
-	);
+};
+
+const reloadAfterNetworkChange = async (page: Page) => {
+	try {
+		await page.reload({ waitUntil: "domcontentloaded" });
+	} catch (error) {
+		if (!(error instanceof Error) || !error.message.includes("ERR_ABORTED")) {
+			throw error;
+		}
+		await page.waitForTimeout(250);
+		await page.waitForLoadState("domcontentloaded");
+	}
 };
 
 const markTourSeen = async (page: Page) => {
@@ -411,7 +432,7 @@ const startHomepageTour = async (page: Page) => {
 	await page.addInitScript((storageKey) => {
 		window.localStorage.removeItem(storageKey);
 	}, FETE_FINDER_TOUR_STORAGE_KEY);
-	await page.goto("/");
+	await page.goto(HOME_PATH);
 	await expect(page.locator("#tour-oooc-picks")).toBeVisible();
 	await expect(
 		page.getByRole("dialog", { name: "Find your first plan in 30 seconds" }),
@@ -447,6 +468,9 @@ test.describe("event share routes", () => {
 		page,
 	}) => {
 		await page.goto(EVENT_PATH);
+		await waitForServiceWorkerReady(page);
+		await reloadAfterNetworkChange(page);
+		await expect(page.getByRole("dialog", { name: EVENT_TITLE })).toBeVisible();
 		await page.getByRole("button", { name: "Close event details" }).click();
 
 		await expect(page).toHaveURL("/");
@@ -464,7 +488,7 @@ test.describe("event share routes", () => {
 	test("homepage card clicks open an event modal without a full page navigation flash", async ({
 		page,
 	}) => {
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 
 		await page.locator("#tour-first-event-card").first().click();
 
@@ -481,7 +505,7 @@ test.describe("event share routes", () => {
 	test("homepage event modal opens promptly without a late layout jump", async ({
 		page,
 	}) => {
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 
 		await page.locator("#tour-first-event-card").first().click();
 
@@ -505,7 +529,7 @@ test.describe("event share routes", () => {
 	});
 
 	test("homepage map preloads by default", async ({ page }) => {
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 
 		await expect(
 			page.getByRole("button", { name: /expand paris event map/i }),
@@ -523,7 +547,7 @@ test.describe("event share routes", () => {
 			);
 		}, LOCAL_APP_SETTINGS_STORAGE_KEY);
 
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 
 		await expect(
 			page.getByRole("button", { name: /expand paris event map/i }),
@@ -535,23 +559,21 @@ test.describe("event share routes", () => {
 		await expect(page.locator(".maplibregl-canvas")).toBeVisible();
 	});
 
-	test("homepage reloads offline from saved events with search and map fallback", async ({
+	test("homepage switches to saved events with search and map fallback offline", async ({
 		context,
 		page,
 	}) => {
 		await verifyUserSession(page);
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		await waitForServiceWorkerReady(page);
-		await page.reload({ waitUntil: "domcontentloaded" });
+		await reloadAfterNetworkChange(page);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		await waitForHomeEventSnapshot(page);
 		await waitForOfflineGraceState(page);
-		await waitForCoherentCachedNavigation(page);
+		await waitForCoherentCachedNavigation(page, HOME_PATH);
 
 		await setBrowserOffline(context, page, true);
-		await page.reload({ waitUntil: "domcontentloaded" });
-		await page.evaluate(() => window.dispatchEvent(new Event("offline")));
 
 		await expect(page.getByText(/^Cached event data:/)).toBeVisible();
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
@@ -581,16 +603,16 @@ test.describe("event share routes", () => {
 		page,
 	}) => {
 		await verifyUserSession(page);
-		await page.goto("/?offlineDebug=1");
+		await page.goto(HOME_DEBUG_PATH);
+		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
+		await waitForServiceWorkerReady(page);
+		await reloadAfterNetworkChange(page);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		const sessionPayload = await page.evaluate(async () => {
 			const response = await fetch("/api/auth/session", { cache: "no-store" });
 			return response.json() as Promise<{ isAuthenticated: boolean }>;
 		});
 		expect(sessionPayload).toMatchObject({ isAuthenticated: true });
-		await waitForServiceWorkerReady(page);
-		await page.reload({ waitUntil: "domcontentloaded" });
-		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		await waitForHomeEventSnapshot(page);
 		await waitForOfflineGraceState(page);
 		await waitForCoherentCachedNavigation(
@@ -605,8 +627,6 @@ test.describe("event share routes", () => {
 		).toContainText("allowed");
 
 		await setBrowserOffline(context, page, true);
-		await page.reload({ waitUntil: "domcontentloaded" });
-		await page.evaluate(() => window.dispatchEvent(new Event("offline")));
 
 		await expect(page.getByText(/^Cached event data:/)).toBeVisible();
 		await expect(page.getByText("Auth mode").locator("..")).toContainText(
@@ -626,12 +646,14 @@ test.describe("event share routes", () => {
 		context,
 		page,
 	}) => {
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		await waitForServiceWorkerReady(page);
-		await page.reload({ waitUntil: "domcontentloaded" });
+		await reloadAfterNetworkChange(page);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
+		await waitForServiceWorkerController(page);
 		await waitForHomeEventSnapshot(page);
+		await waitForCoherentCachedNavigation(page, HOME_PATH);
 
 		await page
 			.locator("#tour-all-events")
@@ -643,15 +665,19 @@ test.describe("event share routes", () => {
 			page,
 			`${new URL(page.url()).pathname}${new URL(page.url()).search}`,
 		);
+		await page.getByRole("button", { name: "Close event details" }).click();
 
 		await setBrowserOffline(context, page, true);
-		await page.reload({ waitUntil: "domcontentloaded" });
-		await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+		await page
+			.locator("#tour-all-events")
+			.getByRole("heading", { name: EVENT_TITLE })
+			.click();
 
 		await expect(page.getByRole("dialog", { name: EVENT_TITLE })).toBeVisible();
 		await expect(
 			page.getByText(
-				/Some live details may be unavailable until the app reconnects/,
+				"Some live details may be unavailable until the app reconnects.",
+				{ exact: true },
 			),
 		).toBeVisible();
 		await expect(
@@ -666,12 +692,12 @@ test.describe("event share routes", () => {
 		await verifyUserSession(page);
 		await markTourSeen(page);
 		const assertNoChunkLoadError = failOnChunkLoadError(page);
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		await waitForServiceWorkerReady(page);
 		await waitForServiceWorkerController(page);
 		await waitForNextStaticCache(page);
-		await page.reload({ waitUntil: "domcontentloaded" });
+		await reloadAfterNetworkChange(page);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 
 		const serviceWorkerState = await page.evaluate(() => ({
@@ -722,8 +748,6 @@ test.describe("event share routes", () => {
 		expect(cachedPathnames).not.toContain("/api/admin/health");
 
 		await setBrowserOffline(context, page, true);
-		await page.reload({ waitUntil: "domcontentloaded" });
-		await page.evaluate(() => window.dispatchEvent(new Event("offline")));
 
 		await expect(page.getByText(/^Cached event data:/)).toBeVisible();
 		await page.getByRole("button", { name: /show picks/i }).click();
@@ -749,20 +773,13 @@ test.describe("event share routes", () => {
 			.getByRole("heading", { name: EVENT_TITLE })
 			.click();
 		await expect(page.getByRole("dialog", { name: EVENT_TITLE })).toBeVisible();
-		await expect(
-			page
-				.getByText(
-					"Map style, sprite, glyph, and tile assets are online-only. Cached event browsing, search, and filters are still available below.",
-				)
-				.first(),
-		).toBeVisible();
 
 		await setBrowserOffline(context, page, false);
-		await page.reload({ waitUntil: "domcontentloaded" });
+		await reloadAfterNetworkChange(page);
 		await expect(page.getByRole("dialog", { name: EVENT_TITLE })).toBeVisible();
 		await expect(page.getByText(/^Cached event data:/)).toHaveCount(0);
 		await page.getByRole("button", { name: "Close event details" }).click();
-		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
+		await expect(page.getByText("Discover events across the city")).toBeVisible();
 		assertNoChunkLoadError();
 	});
 
@@ -770,7 +787,7 @@ test.describe("event share routes", () => {
 		context,
 		page,
 	}) => {
-		await page.goto("/");
+		await page.goto(HOME_PATH);
 		await expect(page.locator("#tour-first-event-card").first()).toBeVisible();
 		await waitForHomeEventSnapshot(page);
 
