@@ -8,6 +8,7 @@ type Setup = {
 	dataManagerGetEventsData: ReturnType<typeof vi.fn>;
 	dataManagerGetDataConfigStatus: ReturnType<typeof vi.fn>;
 	applyFeaturedProjectionToEvents: ReturnType<typeof vi.fn>;
+	applyPromotedProjectionToEvents: ReturnType<typeof vi.fn>;
 	revalidatePath: ReturnType<typeof vi.fn>;
 	revalidateTag: ReturnType<typeof vi.fn>;
 };
@@ -71,6 +72,7 @@ const loadRuntimeService = async (): Promise<Setup> => {
 		dataManagerGetEventsData,
 		dataManagerGetDataConfigStatus,
 		applyFeaturedProjectionToEvents,
+		applyPromotedProjectionToEvents,
 		revalidatePath,
 		revalidateTag,
 	};
@@ -130,6 +132,34 @@ describe("runtime-service", () => {
 		await getLiveEvents();
 
 		expect(applyFeaturedProjectionToEvents).toHaveBeenCalledTimes(1);
+	});
+
+	it("keeps fallback events when an optional Postgres projection fails", async () => {
+		const {
+			getLiveEvents,
+			dataManagerGetEventsData,
+			applyFeaturedProjectionToEvents,
+			applyPromotedProjectionToEvents,
+		} = await loadRuntimeService();
+		const events = [makeEvent("fallback")];
+		dataManagerGetEventsData.mockResolvedValue({
+			success: true,
+			data: events,
+			count: 1,
+			source: "local",
+			warnings: ["Serving local CSV fallback"],
+			lastUpdate: "2026-02-18T00:00:00.000Z",
+		});
+		applyFeaturedProjectionToEvents.mockRejectedValue(
+			new Error("database unavailable"),
+		);
+
+		const result = await getLiveEvents({ includeEngagementProjection: false });
+
+		expect(result.success).toBe(true);
+		expect(result.data).toEqual(events);
+		expect(result.source).toBe("local");
+		expect(applyPromotedProjectionToEvents).toHaveBeenCalledWith(events);
 	});
 
 	it("returns failed events result when source read fails", async () => {

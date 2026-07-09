@@ -20,6 +20,7 @@ import {
 	isJsonContentType,
 	isSameOriginRequest,
 	isWithinBodySizeLimit,
+	readJsonBodyWithinLimit,
 } from "@/lib/http/request-security";
 import { log } from "@/lib/platform/logger";
 import { getEventEngagementRepository } from "@/lib/platform/postgres/event-engagement-repository";
@@ -156,7 +157,10 @@ export async function POST(request: Request) {
 
 	let payload: unknown;
 	try {
-		payload = await request.json();
+		payload = await readJsonBodyWithinLimit(
+			request,
+			TRACKING_JSON_BODY_LIMIT_BYTES,
+		);
 	} catch {
 		return accepted();
 	}

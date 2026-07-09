@@ -7,6 +7,7 @@ import { env } from "@/lib/config/env";
 import { NO_STORE_HEADERS } from "@/lib/http/cache-control";
 import {
 	isWithinBodySizeLimit,
+	readTextBodyWithinLimit,
 	tooLargeNoStoreResponse,
 } from "@/lib/http/request-security";
 import { log } from "@/lib/platform/logger";
@@ -34,7 +35,15 @@ export async function POST(request: Request) {
 		return Response.json({ error: "Webhook not configured" }, { status: 503 });
 	}
 
-	const payload = await request.text();
+	let payload: string;
+	try {
+		payload = await readTextBodyWithinLimit(
+			request,
+			STRIPE_WEBHOOK_BODY_LIMIT_BYTES,
+		);
+	} catch {
+		return tooLargeNoStoreResponse();
+	}
 	const signatureHeader = request.headers.get("stripe-signature");
 	const isValid = verifyStripeWebhookSignature({
 		payload,

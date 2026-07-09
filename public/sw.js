@@ -1,4 +1,4 @@
-const CACHE_VERSION = "oooc-fete-finder-v10";
+const CACHE_VERSION = "oooc-fete-finder-v13";
 const CACHE_PREFIX = "oooc-fete-finder-";
 const PAGE_CACHE = `${CACHE_VERSION}:pages`;
 const PAGE_METADATA_CACHE = `${CACHE_VERSION}:page-metadata`;
@@ -118,7 +118,7 @@ const notifyMissingStaticAsset = async (request) => {
 
 const fetchCacheFirst = async (request, cacheName) => {
 	const cache = await caches.open(cacheName);
-	const cachedResponse = await cache.match(request);
+	const cachedResponse = await cache.match(request, { ignoreVary: true });
 	if (cachedResponse) return cachedResponse;
 
 	const response = await fetch(request);
@@ -143,7 +143,7 @@ const fetchNetworkFirst = async (request, cacheName) => {
 		}
 		return response;
 	} catch (error) {
-		const cachedResponse = await cache.match(request);
+		const cachedResponse = await cache.match(request, { ignoreVary: true });
 		if (cachedResponse) return cachedResponse;
 		throw error;
 	}
@@ -189,10 +189,11 @@ const cacheNavigationSnapshot = async (request, response) => {
 		caches.open(PAGE_CACHE),
 		caches.open(PAGE_METADATA_CACHE),
 	]);
+	const cacheKey = createRequest(request.url);
 	await Promise.all([
-		pageCache.put(request, response.clone()),
+		pageCache.put(cacheKey, response.clone()),
 		metadataCache.put(
-			metadataRequestFor(request.url),
+			metadataRequestFor(cacheKey.url),
 			new Response(
 				JSON.stringify({
 					assetUrls,
@@ -231,8 +232,8 @@ const cacheNavigationUrl = async (value) => {
 };
 
 const getNavigationCacheCandidates = (request) => {
-	const candidates = [request];
 	const url = new URL(request.url);
+	const candidates = [createRequest(url.href)];
 	if (url.search || url.hash) {
 		const withoutSearch = new URL(url.href);
 		withoutSearch.search = "";
@@ -248,7 +249,7 @@ const hasCachedStaticAssets = async (assetUrls) => {
 	const cache = await caches.open(STATIC_CACHE);
 	for (const assetUrl of assetUrls) {
 		if (typeof assetUrl !== "string") return false;
-		const cachedResponse = await cache.match(createRequest(assetUrl));
+		const cachedResponse = await cache.match(assetUrl, { ignoreVary: true });
 		if (!cachedResponse) return false;
 	}
 	return true;
@@ -262,8 +263,8 @@ const getCoherentCachedNavigation = async (request) => {
 
 	for (const candidate of getNavigationCacheCandidates(request)) {
 		const [pageResponse, metadataResponse] = await Promise.all([
-			pageCache.match(candidate),
-			metadataCache.match(metadataRequestFor(candidate.url)),
+			pageCache.match(candidate.url, { ignoreVary: true }),
+			metadataCache.match(metadataRequestFor(candidate.url).url),
 		]);
 		if (!pageResponse || !metadataResponse) continue;
 
@@ -276,6 +277,15 @@ const getCoherentCachedNavigation = async (request) => {
 		} catch {
 			// Ignore malformed metadata and continue to the fallback.
 		}
+	}
+	return null;
+};
+
+const getCachedNavigationSnapshot = async (request) => {
+	const cache = await caches.open(PAGE_CACHE);
+	for (const candidate of getNavigationCacheCandidates(request)) {
+		const response = await cache.match(candidate.url, { ignoreVary: true });
+		if (response) return response;
 	}
 	return null;
 };
@@ -311,13 +321,27 @@ const handleNavigationRequest = async (event) => {
 	} catch {
 		const cachedResponse = await getCoherentCachedNavigation(request);
 		if (cachedResponse) return cachedResponse;
+		// Page snapshots are written only after their static assets are cached. If
+		// metadata was evicted independently, the server-rendered page is still a
+		// more useful offline fallback than the generic error document.
+		const cachedSnapshot = await getCachedNavigationSnapshot(request);
+		if (cachedSnapshot) return cachedSnapshot;
+		const cachedHome = await caches.match(getScopedUrl("/"), {
+			ignoreVary: true,
+		});
+		if (cachedHome) return cachedHome;
 		return getOfflineFallbackResponse();
 	}
 };
 
 self.addEventListener("install", (event) => {
 	self.skipWaiting();
-	event.waitUntil(precacheStaticAssets());
+	event.waitUntil(
+		Promise.all([
+			precacheStaticAssets(),
+			cacheNavigationUrl(getScopedUrl("/")),
+		]),
+	);
 });
 
 self.addEventListener("activate", (event) => {

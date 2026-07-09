@@ -12,8 +12,11 @@
     "enumMembers",
     "duplicates"
   ],
-  "ignoreDependencies": [
-    "@types/geojson"
-  ],
-  "ignoreExportsUsedInFile": true
+	"ignoreDependencies": [
+		"@types/geojson"
+	],
+	"ignore": [
+		"railway-placeholder/public/styles.css"
+	],
+	"ignoreExportsUsedInFile": true
 }

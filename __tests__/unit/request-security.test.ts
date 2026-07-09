@@ -2,6 +2,7 @@ import {
 	isJsonContentType,
 	isSameOriginRequest,
 	isWithinBodySizeLimit,
+	readJsonBodyWithinLimit,
 } from "@/lib/http/request-security";
 import { describe, expect, it } from "vitest";
 
@@ -55,5 +56,31 @@ describe("request security helpers", () => {
 		expect(isJsonContentType(request)).toBe(true);
 		expect(isWithinBodySizeLimit(request, 256)).toBe(true);
 		expect(isWithinBodySizeLimit(request, 64)).toBe(false);
+	});
+
+	it("enforces the limit while reading a body without content-length", async () => {
+		const smallRequest = new Request(
+			"https://fete.example/api/analytics/event",
+			{
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ payload: "bounded" }),
+			},
+		);
+		const largeRequest = new Request(
+			"https://fete.example/api/analytics/event",
+			{
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ payload: "x".repeat(300) }),
+			},
+		);
+
+		await expect(readJsonBodyWithinLimit(smallRequest, 256)).resolves.toEqual({
+			payload: "bounded",
+		});
+		await expect(readJsonBodyWithinLimit(largeRequest, 256)).rejects.toThrow(
+			"Request body too large",
+		);
 	});
 });

@@ -63,6 +63,51 @@ export const isWithinBodySizeLimit = (
 	return Number.isFinite(parsedLength) && parsedLength <= limitBytes;
 };
 
+export class RequestBodyTooLargeError extends Error {
+	constructor() {
+		super("Request body too large");
+		this.name = "RequestBodyTooLargeError";
+	}
+}
+
+export const readTextBodyWithinLimit = async (
+	request: Request,
+	limitBytes: number,
+): Promise<string> => {
+	if (!isWithinBodySizeLimit(request, limitBytes)) {
+		throw new RequestBodyTooLargeError();
+	}
+	if (!request.body) return "";
+
+	const reader = request.body.getReader();
+	const chunks: Uint8Array[] = [];
+	let totalBytes = 0;
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		totalBytes += value.byteLength;
+		if (totalBytes > limitBytes) {
+			await reader.cancel();
+			throw new RequestBodyTooLargeError();
+		}
+		chunks.push(value);
+	}
+
+	const body = new Uint8Array(totalBytes);
+	let offset = 0;
+	for (const chunk of chunks) {
+		body.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return new TextDecoder().decode(body);
+};
+
+export const readJsonBodyWithinLimit = async (
+	request: Request,
+	limitBytes: number,
+): Promise<unknown> =>
+	JSON.parse(await readTextBodyWithinLimit(request, limitBytes));
+
 export const acceptedNoStoreResponse = (): NextResponse =>
 	NextResponse.json(
 		{ success: true },
