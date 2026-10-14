@@ -51,6 +51,10 @@ Open [localhost:3000](http://localhost:3000). This runs the Next.js guide; the r
 
 ## Inside the repo
 
+![An event request and a flyer-processing request, traced through the app.](docs/assets/system-map.gif)
+
+[Still diagram](docs/assets/system-map.png) · [Architecture details](docs/architecture/overview.md)
+
 Next.js App Router, React, TypeScript, Tailwind, Postgres, and MapLibre. Vitest and Playwright cover domain logic and browser journeys; Biome checks code style.
 
 | Area | Responsibility |

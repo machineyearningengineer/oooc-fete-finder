@@ -1,69 +1,42 @@
-# Admin Workflow
+# Admin workflow
 
-Use this when operating the admin console.
+Live admin routes require server-validated authentication. Archive mode replaces the dashboard with a read-only status page.
 
-## Admin Areas
+## Areas
 
-The admin panel is split into focused modules:
+| Route | Work |
+| --- | --- |
+| `/admin` | Overview and links to modules |
+| `/admin/content` | Event sheet, OCR drafts, submissions, and banner settings |
+| `/admin/placements` | Paid order queue and spotlight/promoted scheduling |
+| `/admin/operations` | Runtime source, store controls, sessions, backup, and recovery |
+| `/admin/insights` | Engagement, traffic, and audience exports |
 
-1. `/admin` - overview and quick launch
-2. `/admin/operations` - runtime status, data store controls, session controls, recovery
-3. `/admin/content` - event sheet editor, submissions moderation, sliding banner
-4. `/admin/placements` - paid orders queue, spotlight/promoted schedulers
-5. `/admin/insights` - engagement analytics and collected user exports
+## Publish content
 
-## Standard Publish Flow (Content + Operations)
+1. Open `/admin/content` and review the event sheet or submissions.
+2. Check incomplete fields and OCR alternatives before accepting a draft.
+3. Create a backup before a risky edit in `/admin/operations`.
+4. Save and revalidate through the content/operations controls.
+5. Confirm the source and row count in the runtime snapshot, then open the changed public event.
 
-1. Open `/admin/content`
-2. Update events in `Event Sheet Editor`
-3. If needed, review `Event Submissions`
-4. Update banner settings if needed
-5. Open `/admin/operations`
-6. Create a safety snapshot in `Event Store Controls` (`Backup Now`)
-7. Click `Save and Revalidate Homepage`
-8. Verify results in `Live Runtime Snapshot`
+For paid placements, review the queue in `/admin/placements`, fulfill the order into the appropriate schedule, and confirm its effective window. Partner report links contain access tokens; share them only with the intended recipient.
 
-## Placements Flow
+## Insights and downloads
 
-1. Open `/admin/placements`
-2. Review `Paid Orders Queue`
-3. Fulfill queue items into Spotlight or Promoted schedules
-4. Confirm queue status in `Spotlight & Promoted Scheduler`
-5. Share generated partner stats link when needed
+`click`, `outbound_click`, and `calendar_sync` record event views, external-link clicks, and calendar interactions. The public “saved this” label uses calendar interactions; personal bookmarked events use a separate store.
 
-## Insights Flow ("Who Saved" + Tracking)
+Traffic and audience CSV exports require authorized admin access and a working live database. Partner CSV exports require the report token. These are runtime downloads, not public repository assets. See [engagement tracking](../architecture/engagement-tracking.md).
 
-1. Open `/admin/insights`
-2. Use `Event Engagement Stats` to inspect:
-- views (`click`)
-- outbound clicks (`outbound_click`)
-- calendar saves (`calendar_sync`)
-3. Review top events, discovery metrics, and conversion rates
-4. Export audience CSV segments where required
+## Restore and check
 
-Clarification:
+Restore a selected backup in `/admin/operations`, revalidate, and confirm the restored payload in the runtime snapshot. Check a public event too.
 
-- `"saved this"` in product/admin maps to calendar sync interactions
-- It is aggregate engagement signal, not a user-visible personal saved-events list
+| Symptom | Check |
+| --- | --- |
+| Public content looks stale after save | Runtime source, cache state, and revalidation result |
+| A placement is absent | Event key, effective schedule, and queue status |
+| Analytics are empty | Runtime mode, Postgres, and tracking routes |
+| Submission intake is closed | Submission settings in `/admin/content` |
 
-## Rollback Flow
-
-1. Open `/admin/operations`
-2. Restore `Latest Backup` or a selected snapshot
-3. Revalidate homepage
-4. Confirm restored payload in `Live Runtime Snapshot`
-
-## Health and Access Checks
-
-- `GET /api/admin/health`
-- `GET /api/admin/data-store/status`
-- `GET /api/admin/storage/kv`
-- `GET /api/admin/tokens/sessions`
-- `pnpm check:user-id-drift` (with `DATABASE_URL` set) to confirm no fresh canonical identity misses or malformed IDs
-
-## Common Failure Cases
-
-- Save succeeds but publish looks stale: run save/revalidate again and verify runtime source
-- Spotlight/promoted schedule not applying: verify event keys and queue status in Placements
-- Analytics panel empty: confirm Postgres connectivity and track routes are reachable
-- Submission endpoint closed: check `Event Submissions` settings in Content
+The authenticated health and store endpoints are listed in the [API reference](../reference/api-endpoints.md). [Postgres recovery](postgres-setup-and-recovery.md) covers backup scope and retention.

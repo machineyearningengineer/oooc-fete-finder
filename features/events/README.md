@@ -1,4 +1,4 @@
-# Events Feature
+# Events feature
 
 Core event domain: types, filtering, display, submissions, engagement tracking, and paid/featured placement projection.
 

@@ -1,37 +1,27 @@
-# Fete Finder Design Notes
+# Fête Finder design
 
-## Product Context
+The site uses the layout of a printed guide: readable type, rules, columns, and routes. Decoration should leave event details easy to find.
 
-Fete Finder is an Out Of Office Collective guide for finding, saving, and sharing Paris music events. The UI should feel curated, editorial, practical, and warm. It should not feel like a generic SaaS template or a festival poster generator.
+## Type and colour
 
-## Visual Language
+Prata is the display face; Degular is the body and UI face. The font files live in [public/fonts](public/fonts/FONTS.md). Use the site tokens in [app/globals.css](app/globals.css) for application UI.
 
-- Use warm paper-like surfaces, dark ink, restrained teal/terracotta/green/purple accents, and quiet contrast.
-- Prefer composed structure over decoration. Lines, rails, columns, map-route gestures, and typographic scale should carry the design.
-- Metadata must be anchored to a rule, table, list, card edge, or route object. Avoid floating badges or pills that sit in empty space.
-- Rounded pills are allowed only when they act as controls in the app. For static/share images, use labels, rules, and compact columns instead.
-- Keep accents route-specific but secondary. The brand family should be recognizable across pages.
+Documentation artwork uses warm paper (`#f4eedf`), forest ink (`#243d30`), coral (`#b84a31`), and ochre (`#a9782d`). Keep the same type and colour choices across diagrams, stills, and animations.
 
-## Typography
+## Layout and motion
 
-- Display type can be elegant and serif-led for editorial moments.
-- Body and metadata should be direct, compact, and legible at small preview sizes.
-- Do not use negative letter spacing. Uppercase labels may use modest positive tracking.
-- Long titles should wrap before they collide with structural elements.
+- Anchor labels to a rule, column, card, or route. Keep enough space for long titles.
+- Use pills for interactive controls; use plain labels in diagrams and share images.
+- Show direction with lines and small markers. Keep text still while a request moves.
+- Provide a still beside every documentation animation. Use a single playback rather than an endless loop.
+- Keep diagrams readable at the width of a GitHub README.
 
-## OG Image Rules
+## Share images
 
-- OG images are scraper-facing UI. They must read at small preview sizes and render as 1200x630 PNGs.
-- Static route images should be reproducible from the generator, not hand-edited one-offs.
-- Dynamic OG images may differ only when the route needs live facts:
-  - Event shares: event title, date, time, price, venue, genre, arrondissement.
-  - Shared plans: plan date and stop count.
-- Do not allow arbitrary query string text to render into OG images.
-- Avoid glassmorphism, floating badges, loose decorative blobs, purple-blue gradient defaults, and card stacks.
+Open Graph images are 1200 × 630 PNGs. They need to read at a small preview size. Use the checked-in generators rather than editing rendered files by hand.
 
-## Anti-References
+Event cards can show the title, date, time, price, venue, genre, and area. Shared-plan cards can show the date and stop count. Only supported, validated fields should reach the renderer; arbitrary query text must not become image copy.
 
-- Stranded metadata pills.
-- Generic hero-gradient layouts.
-- Overdecorated social cards that obscure event facts.
-- Route-specific art direction without a route-specific job.
+Avoid floating badges, decorative blobs, glass effects, gradients, and card stacks that compete with the event information.
+
+[Documentation artwork and downloads](docs/assets/README.md)

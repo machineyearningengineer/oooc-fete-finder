@@ -62,3 +62,6 @@ backups/
 /public/sw.js.map
 /public/workbox-*.js.map
 /public/worker-*.js.map
+
+# Local planning and review artifacts
+/.workflow/

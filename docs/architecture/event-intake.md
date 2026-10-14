@@ -4,15 +4,15 @@ The difficult input is a flyer or social post that combines artwork, venue short
 
 ![The intake sequence: collect source material, extract a draft, review uncertainty, and publish to the guide.](../assets/intake-flow.png)
 
-## Collection and extraction are different jobs
+## Image input
 
 Source material can come from ticketing listings, social posts, or manually uploaded flyers. Collection and page monitoring are external to the application's OCR workflow.
 
-The app's verified boundary begins with images submitted to the authenticated event-sheet OCR workflow. `GeminiEventOcrExtractor` calls Gemini, requests JSON, and supplies the event field names. Its default model is `gemini-2.5-flash-lite`, configurable through environment settings.
+Extraction begins with images submitted to the authenticated event-sheet OCR workflow. `GeminiEventOcrExtractor` calls Gemini, requests JSON, and supplies the event field names. Its default model is `gemini-2.5-flash-lite`, configurable through environment settings.
 
 ## Fixed fields, mixed kinds of values
 
-A fixed schema determines **which columns exist**. It does not mean every value comes from a fixed list.
+The schema fixes the columns. Values can be fixed choices, structured strings, or free text.
 
 | Kind | Example | What constrains it |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ OCR candidates are represented as strings or null, then normalized into the row.
 
 Every proposed field can carry its value, quoted evidence, confidence, source-image identifiers and filenames, and up to three alternatives. The prompt asks for null when evidence is absent and warnings for conflicting sources. Model confidence is self-reported, not a calibrated probability.
 
-The normalizer clamps confidence to 0–1, tolerates malformed fields, and builds an editable row. It marks the row as a draft, leaves source confirmation unset, and reports missing title or date. That gives the editor something to inspect rather than silently inventing a complete listing.
+The normalizer clamps confidence to 0–1, tolerates malformed fields, and builds an editable row. It marks the row as a draft, leaves source confirmation unset, and reports missing title or date. The editor can inspect incomplete or conflicting fields before saving.
 
 Multiple images may describe one event. The extraction prompt asks the model to merge complementary details and surface genuine conflicts. The editor also supports treating uploads as separate events; a batch is not automatically proof of one event.
 
@@ -53,4 +53,4 @@ A stable `eventKey` protects identity after publication; it does not solve fuzzy
 - [Event identity](event-identity.md)
 - [Location resolution](../integrations/geocoding.md)
 
-The collection orchestrator is outside this repository. The documented app boundary is image input, reviewable draft output, and editor-controlled publication.
+The authenticated [OCR route](../../app/api/admin/event-sheet/ocr-draft/route.ts) returns drafts without publishing them. External collection tools do not run in this route.

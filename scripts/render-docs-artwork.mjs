@@ -7,7 +7,7 @@ import { Resvg } from "@resvg/resvg-js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const output = join(root, "docs/assets");
-// Site palette: features/recap/recap.css and app/globals.css.
+// Palette and typography are documented in DESIGN.md.
 const palette = {
 	paper: "#f4eedf",
 	ink: "#243d30",
@@ -113,83 +113,111 @@ const box = (x, y, width, title, lines) =>
 const arrow = (x1, y1, x2, y2) =>
 	line(x1, y1, x2, y2, palette.coral, 'stroke-width="2"') +
 	`<path d="M${x2 - 6} ${y2 - 5}L${x2} ${y2}L${x2 - 6} ${y2 + 5}" fill="none" stroke="${palette.coral}" stroke-width="2"/>`;
-const system = () =>
-	base(
-		text(
-			48,
-			60,
-			"THE SYSTEM / TWO SIDES OF THE GUIDE",
-			16,
-			palette.ink,
-			"Degular",
-			'letter-spacing="2"',
-		) +
-			text(
-				48,
-				125,
-				"Reviewed data. Useful decisions.",
-				42,
-				palette.ink,
-				"Prata",
-			) +
-			box(48, 173, 266, "Editor", [
-				"Images → drafts → review",
-				"Authenticated sheet workflow",
-			]) +
-			box(366, 173, 266, "Event store", [
-				"Postgres → backup → CSV",
-				"Validate, cache, project",
-			]) +
-			box(684, 173, 268, "Visitor", [
-				"Discover → save → plan",
-				"List, map, stable links",
-			]) +
-			arrow(317, 229, 357, 229) +
-			arrow(636, 229, 675, 229) +
-			box(48, 337, 266, "External collection", [
-				"Ticketing pages and posts",
-				"Separate from app runtime",
-			]) +
-			box(366, 337, 266, "Archive mode", [
-				"Bundled data; local routes",
-				"Live writes disabled",
-			]) +
-			box(684, 337, 268, "Browser recovery", [
-				"Saved event snapshots",
-				"After an online visit",
-			]) +
-			line(
-				181,
-				287,
-				181,
-				334,
-				palette.ink,
-				'stroke-dasharray="4 4" stroke-opacity=".5"',
-			) +
-			line(
-				499,
-				287,
-				499,
-				334,
-				palette.ink,
-				'stroke-dasharray="4 4" stroke-opacity=".5"',
-			) +
-			line(
-				818,
-				287,
-				818,
-				334,
-				palette.ink,
-				'stroke-dasharray="4 4" stroke-opacity=".5"',
-			) +
-			text(
-				48,
-				508,
-				"Boundaries, not deployment topology. The holding page is a separate seasonal option.",
-				21,
-			),
-		"Fête Finder system boundaries: editor, event store, visitor, collection, archive, and browser recovery.",
+const nodeXs = [48, 286, 524, 762];
+const progressDot = (seconds, start, end, from, to, y, color) => {
+	if (seconds < start || seconds > end) return "";
+	const x = from + (to - from) * ease((seconds - start) / (end - start));
+	return `<circle cx="${x}" cy="${y}" r="4.5" fill="${color}"/>`;
+};
+const system = (seconds = 13) => {
+	let art = text(
+		48,
+		60,
+		"FÊTE FINDER / REQUEST FLOW",
+		16,
+		palette.ink,
+		"Degular",
+		'letter-spacing="2"',
 	);
+	art += text(
+		48,
+		124,
+		"Read an event. Process a flyer.",
+		42,
+		palette.ink,
+		"Prata",
+	);
+	art += text(
+		48,
+		165,
+		"PUBLIC EVENT REQUEST",
+		15,
+		palette.coral,
+		"Degular",
+		'letter-spacing="1.5"',
+	);
+	const publicNodes = [
+		["Browser", ["GET event by key", "Open details"]],
+		["Events API", ["Resolve eventKey", "200 or 404"]],
+		["Runtime", ["Cached event data", "Assemble + validate"]],
+		["Data sources", ["Store / backup / CSV", "Archive: CSV only"]],
+	];
+	const mediaNodes = [
+		["Editor", ["Upload 1–6 images", "PNG / JPEG / WebP"]],
+		["OCR API", ["Auth + origin checks", "Validate upload limits"]],
+		["Extraction", ["Gemini → normalize", "Source + alternatives"]],
+		["Review draft", ["Fields and warnings", "Editor decides to save"]],
+	];
+	for (let i = 0; i < 4; i++) {
+		art += box(nodeXs[i], 188, 190, publicNodes[i][0], publicNodes[i][1]);
+		art += box(nodeXs[i], 415, 190, mediaNodes[i][0], mediaNodes[i][1]);
+		if (i < 3) {
+			art += arrow(nodeXs[i] + 193, 245, nodeXs[i + 1] - 9, 245);
+			art += arrow(nodeXs[i] + 193, 472, nodeXs[i + 1] - 9, 472);
+			art += progressDot(
+				seconds,
+				0.6 + i,
+				1.6 + i,
+				nodeXs[i] + 193,
+				nodeXs[i + 1] - 9,
+				245,
+				palette.coral,
+			);
+			art += progressDot(
+				seconds,
+				7.1 + i * 1.2,
+				8.3 + i * 1.2,
+				nodeXs[i] + 193,
+				nodeXs[i + 1] - 9,
+				472,
+				palette.gold,
+			);
+		}
+	}
+	art += `<path d="M857 300V326H143V300" fill="none" stroke="${palette.ink}" stroke-opacity=".35"/>`;
+	art += progressDot(seconds, 3.9, 6.1, 857, 143, 326, palette.coral);
+	art += text(373, 351, "Event JSON returns to the browser", 19);
+	art += line(48, 372, 952, 372, palette.ink, 'stroke-opacity=".25"');
+	art += text(
+		48,
+		396,
+		"MEDIA PROCESSING / AUTHENTICATED REQUEST",
+		15,
+		palette.coral,
+		"Degular",
+		'letter-spacing="1.5"',
+	);
+	art += `<path d="M857 527V553H143V527" fill="none" stroke="${palette.ink}" stroke-opacity=".35"/>`;
+	art += progressDot(seconds, 10.7, 12.5, 857, 143, 553, palette.gold);
+	art += text(
+		310,
+		578,
+		"Draft results return; extraction does not publish",
+		19,
+	);
+	art += line(48, 602, 952, 602, palette.ink, 'stroke-opacity=".25"');
+	art += text(
+		48,
+		636,
+		"OCR runs within the request. Separate images run sequentially; a combined batch uses one call.",
+		19,
+	);
+	return base(
+		art,
+		"Public event request and authenticated image extraction, including their responses. Timing is illustrative.",
+		670,
+	);
+};
 const intake = () =>
 	base(
 		text(
@@ -204,11 +232,7 @@ const intake = () =>
 			text(48, 126, "A suggestion needs a source.", 44, palette.ink, "Prata") +
 			[
 				[48, "01  Collect", ["Flyers and listings", "External + manual"]],
-				[
-					283,
-					"02  Extract",
-					["Gemini draft fields", "Evidence + alternatives"],
-				],
+				[283, "02  Extract", ["Gemini draft fields", "Source + alternatives"]],
 				[518, "03  Review", ["Dates and duplicates", "Venue ambiguity"]],
 				[753, "04  Publish", ["Reviewed event rows", "Public finder"]],
 			]
@@ -254,37 +278,42 @@ for (const [name, svg] of [
 	await writeFile(join(output, `${name}.png`), render(svg));
 }
 if (!process.argv.includes("--stills-only")) {
-	const temporary = await mkdtemp(join(tmpdir(), "fete-docs-"));
-	try {
-		for (let frame = 0; frame < 108; frame++) {
-			await writeFile(
-				join(temporary, `${String(frame).padStart(3, "0")}.png`),
-				render(route(frame / 12)),
+	for (const [name, draw, frames] of [
+		["finder-route", route, 108],
+		["system-map", system, 168],
+	]) {
+		const temporary = await mkdtemp(join(tmpdir(), "fete-docs-"));
+		try {
+			for (let frame = 0; frame < frames; frame++) {
+				await writeFile(
+					join(temporary, `${String(frame).padStart(3, "0")}.png`),
+					render(draw(frame / 12)),
+				);
+			}
+			const result = spawnSync(
+				"ffmpeg",
+				[
+					"-y",
+					"-loglevel",
+					"error",
+					"-framerate",
+					"12",
+					"-i",
+					join(temporary, "%03d.png"),
+					"-filter_complex",
+					"split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5",
+					"-loop",
+					"-1",
+					join(output, `${name}.gif`),
+				],
+				{ stdio: "inherit" },
 			);
+			if (result.error) throw result.error;
+			if (result.status !== 0)
+				throw new Error(`ffmpeg failed (${result.status})`);
+		} finally {
+			await rm(temporary, { recursive: true, force: true });
 		}
-		const result = spawnSync(
-			"ffmpeg",
-			[
-				"-y",
-				"-loglevel",
-				"error",
-				"-framerate",
-				"12",
-				"-i",
-				join(temporary, "%03d.png"),
-				"-filter_complex",
-				"split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5",
-				"-loop",
-				"-1",
-				join(output, "finder-route.gif"),
-			],
-			{ stdio: "inherit" },
-		);
-		if (result.error) throw result.error;
-		if (result.status !== 0)
-			throw new Error(`ffmpeg failed (${result.status})`);
-	} finally {
-		await rm(temporary, { recursive: true, force: true });
 	}
 }
 console.log("Rendered documentation artwork in docs/assets.");

@@ -29,8 +29,6 @@ Queued local mutations have a separate contract in [offline mutations](../../fea
 
 ## Verification and remaining goals
 
-The previous document recorded a production-mode acceptance pass on **9 May 2026**: online load, service worker readiness, snapshot persistence, offline reload, saved search/detail recovery, map fallback, reconnect, and sensitive cache exclusions. This historical result was not repeated for the documentation revision.
-
 `e2e/event-routes.spec.ts` contains the browser offline journey. After changing caching, hydration, or auth boundaries, verify an online visit followed by offline hard reload and reconnect in a production build. Unit checks alone cannot establish service worker behavior.
 
 Remaining work is focused hardening:

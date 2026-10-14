@@ -2,7 +2,9 @@
 
 Fête Finder has two main actors: a visitor choosing where to go, and an editor maintaining the guide. Collection helpers prepare source material outside the app. The application's job is to turn reviewed event rows into a dependable public experience.
 
-![System boundaries: sources become reviewed event rows, then reach discovery and local browser snapshots.](../assets/system-map.png)
+![A public event request and an authenticated flyer-processing request move through the application.](../assets/system-map.gif)
+
+[Still diagram](../assets/system-map.png) · [Replay or download](../assets/system-map.gif)
 
 ## Follow one listing
 
@@ -12,9 +14,11 @@ Fête Finder has two main actors: a visitor choosing where to go, and an editor 
 4. Public pages deliver the event data. Client islands handle search, filters, maps, details, and account-dependent controls.
 5. The browser can persist validated event snapshots for a later offline visit. Local route state is a separate concern from shared, server-backed plans.
 
-[The intake contract](event-intake.md) explains the boundary between model suggestions and published data.
+The flyer-processing service runs inside `POST /api/admin/event-sheet/ocr-draft`. The route checks admin authorization, same-origin access, supported image types, and upload limits. It accepts up to six images, calls Gemini, normalizes each draft, and returns results with no-store headers. Separate-image mode processes images sequentially; combined mode makes one extraction call. There is no separate background media queue in this app.
 
-## Boundaries that matter
+The public event-detail route returns an event by key or a 404. Successful responses can be revalidated; failed lookups are not cached. [Event intake](event-intake.md) describes draft review and publication.
+
+## Code map
 
 | Boundary | Responsibility | Owning source |
 | --- | --- | --- |
@@ -30,14 +34,11 @@ Fête Finder has two main actors: a visitor choosing where to go, and an editor 
 
 In `DATA_MODE=remote`, the source chain is:
 
-```mermaid
-flowchart LR
-  A[Managed Postgres store] -->|unavailable or invalid| B[Latest backup in Postgres]
-  B -->|unavailable or invalid| C[Bundled event CSV]
-  A --> D[Validated runtime events]
-  B --> D
-  C --> D
-```
+| Read mode | Source order |
+| --- | --- |
+| `remote` | Managed Postgres store → latest Postgres backup → bundled CSV |
+| `local` or archive | Bundled CSV |
+| `test` | Test fixtures |
 
 The backup is stored in Postgres too: it helps with damaged live event data, but it is not an independent database-outage fallback. The bundled CSV supplies that final fallback and may be stale. Runtime results retain their source and error context.
 
@@ -61,7 +62,7 @@ Gemini assists draft extraction. Google geocoding resolves venue coordinates. St
 
 ## Seasonal deployment
 
-The Next.js app supports both live and archive behavior. The checked-in root Dockerfile on this documentation branch serves `railway-placeholder/` with Caddy, a separate lightweight off-season holding page. Running `pnpm dev` starts the full application. A Docker deployment and a local app demo therefore do not necessarily show the same experience.
+The Next.js app supports both live and archive behavior. The root Dockerfile serves `railway-placeholder/` with Caddy, a separate lightweight off-season holding page. Running `pnpm dev` starts the full application. A Docker deployment and a local app demo therefore do not necessarily show the same experience.
 
 Confirm the build configuration and running service before making deployment claims; repository support for a mode does not establish that it is deployed.
 

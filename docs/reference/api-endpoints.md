@@ -1,6 +1,6 @@
-# API Endpoints Reference
+# API endpoints reference
 
-## Public Auth + Submission
+## Public auth + submission
 
 - `POST /api/auth/verify`: validates user details and sets `oooc_user_session`
 - `POST /api/auth/lookup`: same-origin user lookup for known profile details
@@ -8,14 +8,14 @@
 - `DELETE /api/auth/session`: clears the current public user session
 - `POST /api/event-submissions`: accepts host event submissions (subject to settings + limits)
 
-## Public Tracking
+## Public tracking
 
 - `POST /api/analytics/event`: event engagement tracking (`click`, `outbound_click`, `calendar_sync`)
 - `POST /api/analytics/discovery`: first-party traffic and discovery analytics tracking (`page_view`, `search`, `filter_apply`, `filter_clear`, map/sort/location/tour/nav signals)
 - `POST /api/analytics/ticket-exchange`: ticket-exchange interaction tracking
 - `POST /api/user/preferences`: authenticated user genre preference signal
 
-## Public Event, Plans + User State
+## Public event, plans + user state
 
 - `GET /api/events/[eventKey]`: public event detail JSON for client hydration and offline-safe detail cache; successful responses use `public, max-age=0, must-revalidate`
 - `GET /api/ticket-exchange/events/[eventKey]/summary`: public ticket-exchange listing summary for one event
@@ -27,7 +27,7 @@
 - `GET /api/user/saved-events`: authenticated saved event keys
 - `POST /api/user/saved-events`: authenticated save/unsave event state
 
-## Public Media + Utility
+## Public media + utility
 
 - `GET /api/og`: OG image generation endpoint (`route.tsx`)
 - `HEAD /api/og`: OG cache header probe
@@ -35,7 +35,7 @@
 - `GET /api/partner-stats/[activationId]`: tokenized partner stats snapshot (`?token=...`)
 - `GET /api/partner-stats/[activationId]?token=...&format=csv`: partner stats CSV export
 
-## Admin Endpoints (Authenticated)
+## Admin endpoints (Authenticated)
 
 - `GET /api/admin/health`
 - `GET /api/admin/data-store/status`
@@ -50,16 +50,16 @@
 - `DELETE /api/admin/tokens/sessions/[jti]`
 - `POST /api/admin/tokens/revoke`
 
-## Revalidation Endpoint
+## Revalidation endpoint
 
 - `POST /api/revalidate/deploy`
 - Requires `Authorization: Bearer <DEPLOY_REVALIDATE_SECRET>`
 
-## Webhook Endpoint
+## Webhook endpoint
 
 - `POST /api/webhooks/stripe`: Stripe webhook ingestion for partner activation queue
 
-## Ticket Exchange Bot Endpoints
+## Ticket exchange bot endpoints
 
 All bot routes require `TICKET_EXCHANGE_BOT_SECRET` authorization.
 
@@ -67,7 +67,7 @@ All bot routes require `TICKET_EXCHANGE_BOT_SECRET` authorization.
 - `GET /api/ticket-exchange/bot/listings/[listingId]/status`
 - `POST /api/ticket-exchange/bot/announce-callback`
 
-## Cron Endpoints
+## Cron endpoints
 
 - `GET /api/cron/cleanup-admin-sessions`
 - `GET /api/cron/cleanup-rate-limits`

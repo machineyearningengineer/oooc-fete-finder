@@ -1,12 +1,12 @@
-# OOOC Brand Fonts
+# OOOC brand fonts
 
 The canonical web fonts are checked into this folder and loaded with
 `next/font/local` from `app/layout.tsx`.
 
 | Role | File | CSS variable |
 | --- | --- | --- |
-| Display headings | `prata_regular.woff2` | `--font-prata` |
-| Body/UI | `degular_regular.woff2` | `--font-degular` |
+| Display headings | [prata_regular.woff2](prata_regular.woff2) | `--font-prata` |
+| Body/UI | [degular_regular.woff2](degular_regular.woff2) | `--font-degular` |
 
 ## Rules
 

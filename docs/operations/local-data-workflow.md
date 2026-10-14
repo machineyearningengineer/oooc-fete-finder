@@ -1,15 +1,15 @@
-# Local Data Workflow
+# Local data workflow
 
 Use this policy when deciding how local development should read event data.
 
-## Canonical Model
+## Canonical model
 
 - Canonical event truth is the managed Postgres event store.
 - `data/events.csv` is a generated fallback snapshot of that truth.
 - `DATA_MODE=remote` is the normal local and production-parity mode.
 - `DATA_MODE=local` is for fallback testing, no-database browsing, and the frozen archive. It does not exercise live database workflows.
 
-## Recommended Local Setup
+## Recommended local setup
 
 For release checks and feature work that touches runtime behavior, run locally against Postgres:
 
@@ -20,7 +20,7 @@ DATABASE_URL=postgresql://...
 
 Use a local or preview Postgres database for mutating admin work whenever possible. Use development credentials for local work. Production data access belongs to the project's restricted operational tools; do not copy production credentials to a laptop.
 
-## Keeping The Fallback Fresh
+## Keeping the fallback fresh
 
 Before release, refresh the checked-in fallback snapshot from the current managed store:
 
@@ -37,7 +37,7 @@ pnpm test -- __tests__/integration/local-csv-fallback.test.ts
 pnpm build
 ```
 
-## Seeding A Postgres Store
+## Seeding A Postgres store
 
 For a new local or preview database, seed from `data/events.csv`:
 
@@ -47,6 +47,6 @@ pnpm bootstrap:postgres-store
 
 The bootstrap script seeds from available project event data and only writes event rows when the event-store table is empty.
 
-## When To Use DATA_MODE=local
+## When to use dATA_MODE=local
 
 Use `DATA_MODE=local` only to confirm the emergency CSV path works or when no database is available. It does not exercise Postgres tables, admin store writes, backups, restores, user plans, saved events, analytics, rate limits, or production database failure modes.
