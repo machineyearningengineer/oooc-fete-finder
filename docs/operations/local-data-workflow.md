@@ -7,7 +7,7 @@ Use this policy when deciding how local development should read event data.
 - Canonical event truth is the managed Postgres event store.
 - `data/events.csv` is a generated fallback snapshot of that truth.
 - `DATA_MODE=remote` is the normal local and production-parity mode.
-- `DATA_MODE=local` is only for fallback testing or no-database work.
+- `DATA_MODE=local` is for fallback testing, no-database browsing, and the frozen archive. It does not exercise live database workflows.
 
 ## Recommended Local Setup
 
@@ -18,7 +18,7 @@ DATA_MODE=remote
 DATABASE_URL=postgresql://...
 ```
 
-Use a local or preview Postgres database for mutating admin work whenever possible. Production Postgres should be treated as read-only from local shells unless the task is explicitly an operational production edit.
+Use a local or preview Postgres database for mutating admin work whenever possible. Use development credentials for local work. Production data access belongs to the project's restricted operational tools; do not copy production credentials to a laptop.
 
 ## Keeping The Fallback Fresh
 

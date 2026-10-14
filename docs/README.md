@@ -1,38 +1,41 @@
-# Docs Home
+# The guide, and the system behind it
 
-If you are new to this codebase, start here.
+Fête Finder turns scattered event information into a guide people can use together. These docs explain the product first, then the boundaries that keep the data useful.
 
-## Fast Start (15 minutes)
+## Understand the product
 
-1. Read [Architecture Overview](./architecture/overview.md)
-2. Read [Engagement Tracking](./architecture/engagement-tracking.md)
-3. Set env vars from [Environment Variables](./reference/environment-variables.md)
-4. Run `pnpm install` then `pnpm dev`
-5. Learn the admin flow in [Admin Workflow](./operations/admin-workflow.md)
+| Read | For |
+| --- | --- |
+| [Product goals](product/goals.md) | The problem, intended experience, and remaining decisions |
+| [Event intake](architecture/event-intake.md) | Collection, OCR, structured drafts, review, and publication |
 
-## Choose by Goal
+## Understand the engineering
 
-- I need the big picture: [Architecture Overview](./architecture/overview.md)
-- I need the tracking and "saved this" behavior: [Engagement Tracking](./architecture/engagement-tracking.md)
-- I need stable event links: [Event Identity](./architecture/event-identity.md)
-- I need to run/admin the app: [Admin Workflow](./operations/admin-workflow.md)
-- I need a production deploy/incident checklist: [Production Readiness](./operations/production-readiness.md)
-- I need to verify Railway cron jobs: `pnpm check:railway-cron`
-- I need Postgres setup or recovery steps: [Postgres Setup And Recovery](./operations/postgres-setup-and-recovery.md)
-- I need logs/troubleshooting context: [Logging & Observability](./operations/logging-and-observability.md)
-- I need abuse protection details: [Rate Limiting](./security/rate-limiting.md)
-- I need endpoint inventory: [API Endpoints](./reference/api-endpoints.md)
-- I need all env vars and requirements: [Environment Variables](./reference/environment-variables.md)
-- I need location/geocoding behavior: [Location Resolution](./integrations/geocoding.md)
+| Read | For |
+| --- | --- |
+| [Architecture overview](architecture/overview.md) | Actors, stores, rendering, failure, and recovery |
+| [Event identity](architecture/event-identity.md) | Stable links and import identity |
+| [Offline access](architecture/offline-access-goals.md) | Cached shells, saved snapshots, and supported limits |
+| [Engagement tracking](architecture/engagement-tracking.md) | Recorded actions, deduplication, and social proof |
+| [Location resolution](integrations/geocoding.md) | Venue lookup, coordinate fallback, and map links |
+| [Haptics](architecture/haptics.md) | Mobile feedback and its interaction rules |
+| [Rate limiting](security/rate-limiting.md) | Abuse controls at write boundaries |
 
-## Docs Structure
+## Run and maintain it
 
-- `architecture/` system contracts and data/analytics design
-- `operations/` runbooks for admin workflows, deploy, production readiness, and recovery
-- `security/` abuse controls and endpoint hardening
-- `integrations/` external provider behavior (Google)
-- `reference/` endpoint and environment references
+| Read | For |
+| --- | --- |
+| [Local data workflow](operations/local-data-workflow.md) | Development Postgres and bundled-data work |
+| [Admin workflow](operations/admin-workflow.md) | Content, placements, operations, and insights |
+| [Postgres setup and recovery](operations/postgres-setup-and-recovery.md) | Store initialization, backup, and recovery |
+| [Archive mode](operations/archive-mode.md) | Frozen data, disabled writes, and seasonal restoration |
+| [Production readiness](operations/production-readiness.md) | Release checks and cron configuration |
+| [Logging and observability](operations/logging-and-observability.md) | Runtime diagnosis |
+| [Environment variables](reference/environment-variables.md) | Configuration names and requirements |
+| [API endpoints](reference/api-endpoints.md) | HTTP surface inventory |
 
-## Source of Truth Rule
+## Supporting material
 
-When docs and code disagree, code wins. Update docs in the same PR as behavior changes.
+[Artwork source and rendering](assets/README.md) explain the README animation. [Design history](design-archive/mobile-bottom-nav-before-liquid-split.md) retains a recoverable navigation reference; it is not the current design specification.
+
+Product goals describe intent. Architecture describes implemented contracts. Runbooks describe procedures, not proof of a current deployment. Update the owning document when behavior changes; keep test reports dated and avoid turning them into permanent guarantees.

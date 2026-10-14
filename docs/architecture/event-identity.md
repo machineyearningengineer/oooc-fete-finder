@@ -18,17 +18,9 @@ Public share links use:
 
 - `/event/<eventKey>/<slug>/`
 
-This route sets share metadata and then redirects into homepage modal state using:
+The route resolves the event by `eventKey`, renders event-specific share metadata and an initial detail preview, then hydrates the interactive event view. The slug is descriptive text, not lookup identity. Client URL updates retain the canonical event path rather than requiring a redirect to the homepage.
 
-- `event`: canonical identity key
-- `slug`: optional display text
-
-Example:
-
-- `/event/evt_ab12cd34ef56/example-event-name/`
-- Redirect target: `/?event=evt_ab12cd34ef56&slug=example-event-name`
-
-If `slug` is wrong, the app still resolves by `event`.
+For example, `/event/evt_ab12cd34ef56/example-event-name/` still resolves by the key if the title or slug changes.
 
 ## CSV + Admin Behavior
 
