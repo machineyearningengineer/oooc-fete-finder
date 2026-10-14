@@ -1,209 +1,70 @@
-# OOOC Fête Finder
+# Fête Finder
 
-OOOC Fête Finder is a Next.js application for discovering Fête de la Musique events in Paris. It combines a public event finder with an authenticated admin workflow for managing event data, submissions, featured placements, partner activations, and engagement insights.
+A Paris music guide by **Out Of Office Collective**. Find your sound, save a few favourites, and turn a city full of possibilities into your own route through Fête de la Musique.
 
-The project is maintained for Out Of Office Collective and is designed around a Postgres source of truth, static-first public pages, and dynamic authenticated admin operations.
+![An illustrated route through Paris: discover the music, compare places, and build a night.](docs/assets/finder-route.gif)
 
-## Highlights
+*An illustrative journey, not a live itinerary. [View the still artwork](docs/assets/finder-route.png).*
 
-- Event discovery with search, filters, maps, stable share links, and event detail modals
-- Admin console for event sheet editing, host submissions, featured/promoted scheduling, runtime health, and recovery actions
-- Postgres-backed event store with backup and bundled CSV fallback paths
-- Engagement tracking for saved-event social proof, discovery analytics, partner reporting, and audience preferences
-- Optional geocoding enrichment for map coordinates, with text-search fallbacks when provider keys are unavailable
-- Abuse protection for auth, tracking, preference, and event-submission endpoints
+## A weekend scattered across the internet
 
-## Tech Stack
+The listings were everywhere: flyers, Instagram posts, ticketing pages, and group chats. The useful details—when, where, how much, and what kind of music—rarely arrived in the same format.
 
-- Next.js App Router
-- React
-- TypeScript
-- Tailwind CSS v4
-- Postgres
-- Vitest
-- Biome
-- Railway-oriented deployment/runtime conventions
+Fête Finder brings them into one guide. Browse by date, genre, price, and area; compare places on a map; open an event, save it, add it to a calendar, or build a route with friends. OOOC Picks give the guide a point of view alongside the wider listings.
 
-## Repository Status
+## From a flyer to a night out
 
-This repository is source-available, not open-source licensed. The code is shared for transparency and review, but reuse, copying, modification, distribution, sublicensing, sale, resale, scraping, commercial exploitation, or incorporation into another work is not permitted without prior written permission.
+| Behind the guide | In the guide |
+| --- | --- |
+| Collect candidate listings and flyer images | Search a consistent event catalogue |
+| Extract draft fields with Gemini, retaining evidence and uncertainty | Compare dates, prices, genres, and settings |
+| Review missing details, conflicting suggestions, and possible duplicates | Open a stable event link or find a place on the map |
+| Publish reviewed rows through the admin sheet | Save favourites and arrange stops into a route |
 
-See [LICENSE](./LICENSE) for the full terms.
+The AI-assisted intake proposes data. The editor decides what is ready to publish. Collection agents and page-watching tools sit outside this app; the built-in OCR editor also accepts manually uploaded images. [Follow the data journey →](docs/architecture/event-intake.md)
 
-## Getting Started
+## Built for the day itself
 
-### Prerequisites
+- **Useful on a phone.** Filters, event details, maps, calendar links, and routes support decisions while moving around the city.
+- **Links that survive edits.** An immutable event key identifies a listing; its title and URL slug can change.
+- **A guide that can recover.** Live reads fall back from Postgres to a database backup, then the bundled CSV. Saved browser snapshots support browsing after a successful online visit; maps still need connectivity.
+- **A season with an ending.** Archive mode preserves a frozen guide with local routes and no account or database writes. It is separate from the lightweight off-season holding page used by the checked-in Dockerfile.
 
-- Node.js compatible with the current Next.js version
-- pnpm
-- A Postgres database for remote/runtime data workflows
+[Product goals](docs/product/goals.md) · [Architecture](docs/architecture/overview.md)
 
-### Install
+## Try the guide locally
 
-```bash
+Use the Node version declared in `package.json` and pnpm. A database and provider keys are unnecessary for browsing the bundled archive.
+
+```sh
 pnpm install
-```
-
-### Configure Environment
-
-Copy the example environment file:
-
-```bash
 cp .env.example .env.local
 ```
 
-Set the required values:
+In `.env.local`, set `DATA_MODE=local`, both `ARCHIVE_MODE` and `NEXT_PUBLIC_ARCHIVE_MODE` to `true`, and `NEXT_PUBLIC_ANALYTICS_ENABLED=false`. Leave `DATABASE_URL` and `ADMIN_KEY` empty. Replace the example `AUTH_SECRET` with a locally generated value of at least 32 characters, kept only in that ignored file.
 
-```bash
-AUTH_SECRET=replace-with-a-random-32-plus-character-secret
-DATABASE_URL=postgresql://user:pass@host:5432/dbname?sslmode=require
-DATA_MODE=remote
-```
-
-`ADMIN_KEY` is optional. If it is empty, admin login and admin APIs are disabled.
-
-Optional provider integrations, such as Google geocoding, event OCR, Stripe webhooks, and ticket-exchange bot auth, are documented in [.env.example](./.env.example) and [docs/reference/environment-variables.md](./docs/reference/environment-variables.md).
-
-### Run Locally
-
-```bash
+```sh
 pnpm dev
 ```
 
-The app will be available at [http://localhost:3000](http://localhost:3000).
+Open [localhost:3000](http://localhost:3000). This runs the Next.js guide; the root Dockerfile currently builds the off-season holding page instead. For authenticated editing and live integrations, use a development Postgres database and the [local data workflow](docs/operations/local-data-workflow.md). See the [environment reference](docs/reference/environment-variables.md) for optional providers.
 
-### Seed Runtime Data
+## Inside the repo
 
-For a Postgres-backed setup, seed the event store before relying on `DATA_MODE=remote`:
+Next.js App Router, React, TypeScript, Tailwind, Postgres, and MapLibre. Vitest and Playwright cover domain logic and browser journeys; Biome checks code style.
 
-```bash
-pnpm bootstrap:postgres-store
-```
+| Area | Responsibility |
+| --- | --- |
+| `app/` | Public pages, admin surfaces, and HTTP boundaries |
+| `features/events/` | Discovery, filtering, details, placements, and engagement |
+| `features/plans/` | Route planning, local persistence, and shared plans |
+| `features/data-management/` | Event assembly, OCR drafts, sheet editing, and publishing |
+| `features/locations/`, `features/maps/` | Venue resolution, coordinates, and map experience |
+| `lib/platform/` | Postgres repositories, storage adapters, and logging |
+| `docs/` | Product intent, system contracts, runbooks, and references |
 
-For local development, prefer `DATA_MODE=remote` with a local or preview Postgres database. `DATA_MODE=local` is an emergency/no-database fallback path that reads only the bundled CSV. See [Local Data Workflow](./docs/operations/local-data-workflow.md).
+Start with the [docs map](docs/README.md). Operational detail lives there so this page can stay about the guide.
 
-Before release, refresh the bundled fallback snapshot from the managed store:
+## Rights
 
-```bash
-pnpm db:pull-events-csv
-```
-
-## Common Commands
-
-```bash
-pnpm dev                 # start the local dev server
-pnpm build               # create a production build
-pnpm start               # run the production build
-pnpm test                # run Vitest
-pnpm test:coverage       # run Vitest with coverage
-pnpm lint                # run Biome linting
-pnpm format              # format with Biome
-pnpm fix                 # apply Biome fixes
-pnpm deadcode            # scan unused files/dependencies with knip
-pnpm deadcode:exports    # scan unused TypeScript exports
-pnpm check:user-id-drift  # check canonical userId identity drift in analytics tables
-pnpm health:check        # verify database and admin health endpoints
-pnpm db:cli              # open the database/status utility
-```
-
-## Project Structure
-
-```text
-app/                       Next.js routes, layouts, route handlers, and page-level UI
-features/data-management/  Runtime data orchestration and admin write workflows
-features/events/           Event domain logic, filtering, ordering, cards, and tracking
-features/events/featured/  Featured event scheduling
-features/events/promoted/  Promoted event scheduling
-features/locations/        Location resolution and map-link behavior
-features/maps/             Coordinate storage, warmup, and map utilities
-features/partners/         Partner activation and reporting workflows
-features/security/         Rate limiting and abuse-prevention primitives
-lib/platform/              Logging, KV adapters, Postgres clients, and repositories
-docs/                      Architecture notes, runbooks, integration docs, and references
-```
-
-## Runtime Model
-
-In `DATA_MODE=remote`, event reads use this source order:
-
-1. Managed Postgres event store
-2. Latest Postgres event-store backup if the live store is unavailable or invalid
-3. Bundled local CSV fallback if remote reads and backups are unavailable
-
-Public pages are static-first where possible. Admin routes and admin APIs are authenticated, dynamic, and request-time rendered.
-
-See [docs/architecture/overview.md](./docs/architecture/overview.md) for the full rendering, auth, data, and code-map contract.
-
-## Admin Workflow
-
-The admin console is split into focused areas:
-
-- `/admin` for the overview hub
-- `/admin/operations` for runtime health, store controls, sessions, and recovery
-- `/admin/content` for event editing, submissions moderation, and sliding banner settings
-- `/admin/placements` for paid order queues and spotlight/promoted schedulers
-- `/admin/insights` for engagement analytics and collected users
-
-The standard publish loop is:
-
-1. Edit event content in `/admin/content`
-2. Manage featured or promoted placements in `/admin/placements`
-3. Backup and revalidate in `/admin/operations`
-4. Review tracking and audience outcomes in `/admin/insights`
-
-See [docs/operations/admin-workflow.md](./docs/operations/admin-workflow.md) for the day-to-day runbook.
-
-## Documentation
-
-Start with [docs/README.md](./docs/README.md) for a guided index.
-
-Key references:
-
-- [Architecture Overview](./docs/architecture/overview.md)
-- [Event Identity](./docs/architecture/event-identity.md)
-- [Engagement Tracking](./docs/architecture/engagement-tracking.md)
-- [Admin Workflow](./docs/operations/admin-workflow.md)
-- [Production Readiness](./docs/operations/production-readiness.md)
-- [Logging and Observability](./docs/operations/logging-and-observability.md)
-- [Rate Limiting](./docs/security/rate-limiting.md)
-- [API Endpoints](./docs/reference/api-endpoints.md)
-- [Environment Variables](./docs/reference/environment-variables.md)
-- [Location Resolution](./docs/integrations/geocoding.md)
-
-## Quality Checks
-
-Before merging meaningful changes, run the checks that match the change scope:
-
-```bash
-pnpm lint
-pnpm test
-pnpm exec tsc --noEmit
-pnpm build
-```
-
-For cleanup or dependency work, also run:
-
-```bash
-pnpm deadcode
-pnpm deadcode:exports
-```
-
-## Security Notes
-
-- `AUTH_SECRET` must be at least 32 characters and should be generated with a secure random source.
-- `ADMIN_KEY`, `ADMIN_RESET_PASSCODE`, `CRON_SECRET`, and `DEPLOY_REVALIDATE_SECRET` should be distinct values.
-- Admin endpoints require valid admin authentication.
-- Production and preview deploys should set `DATA_MODE=remote` and `DATABASE_URL`.
-- Sensitive identifiers used for rate limiting are HMAC-hashed with `AUTH_SECRET`.
-
-## Images
-
-This README intentionally does not include screenshots. The project is primarily an operational web application, and the most useful context for new readers is the architecture, setup path, and admin workflow. Visual assets live in the app and docs where they support a specific feature or artifact.
-
-## License
-
-Copyright (c) 2026 OUT OF OFFICE COLLECTIVE LTD.
-
-All rights reserved. This project is proprietary. See [LICENSE](./LICENSE).
-
-Out Of Office Collective is a registered trade mark of OUT OF OFFICE COLLECTIVE LTD. OOOC, Fete Finder, Fête Finder, and associated logos and brand assets are trade marks or claimed trade marks of OUT OF OFFICE COLLECTIVE LTD. No permission is granted to use them in a way that suggests endorsement, affiliation, sponsorship, origin, or permission.
+Source-available; all rights reserved. The repository is shared for inspection and is **not licensed for reuse**. Code and OOOC brand assets remain subject to [LICENSE](LICENSE).

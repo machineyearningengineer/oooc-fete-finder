@@ -1,106 +1,70 @@
-# Architecture Overview
+# Architecture
 
-This app is a Next.js App Router project for Fete event discovery, with a server-authenticated admin console, Postgres-backed runtime data, and first-party engagement tracking.
+Fête Finder has two main actors: a visitor choosing where to go, and an editor maintaining the guide. Collection helpers prepare source material outside the app. The application's job is to turn reviewed event rows into a dependable public experience.
 
-## System At A Glance
+![System boundaries: sources become reviewed event rows, then reach discovery and local browser snapshots.](../assets/system-map.png)
 
-- Public pages are static-first where possible and dynamic where shell/chunk
-  freshness matters
-- Admin pages and admin APIs are server-authenticated and module-based
-- Runtime event reads use a source chain controlled by `DATA_MODE`
-- Spotlight/Promoted scheduling is Postgres-backed
-- Engagement tracking powers social proof, insights, and partner reporting
+## Follow one listing
 
-## Rendering Contract
+1. An editor imports rows or uploads flyer images into the event sheet. Gemini returns draft fields with evidence, confidence, alternatives, and warnings.
+2. The editor reviews and saves the sheet. Event identity is kept separate from editable titles and venues.
+3. `getLiveEvents()` assembles runtime events through `DataManager`, then applies placement and engagement projections where enabled.
+4. Public pages deliver the event data. Client islands handle search, filters, maps, details, and account-dependent controls.
+5. The browser can persist validated event snapshots for a later offline visit. Local route state is a separate concern from shared, server-backed plans.
 
-1. Public routes are cache-friendly where possible, but data-dependent public
-   routes may opt into dynamic rendering or indefinite cache with explicit
-   revalidation from admin/deploy hooks.
-2. Admin routes are dynamic and authenticated (`/admin/*`)
-3. `app/layout.tsx` stays cache-friendly and should not depend on request cookies
+[The intake contract](event-intake.md) explains the boundary between model suggestions and published data.
 
-### Current Route Cache Rules
+## Boundaries that matter
 
-- `/`: `force-dynamic`, `revalidate = 0`; event data is cached separately
-- `/feature-event`: `revalidate = false`
-- `/submit-event`: `revalidate = false`
-- `/partner-success`: `revalidate = false`
-- `/plans`: `force-dynamic`, `revalidate = 0`; event data is cached separately
-- `/plans/[shareToken]`: `revalidate = 0`
-- `/privacy`: `force-static`
-- `/terms`: `force-static`
-- `/event/[eventKey]/[[...slug]]`: dynamic
-- `/exchange` and `/exchange/[eventKey]`: dynamic
-- `/partner-stats/[activationId]`: `force-dynamic`
-- `/admin/*`: `force-dynamic` + `noStore()`
+| Boundary | Responsibility | Owning source |
+| --- | --- | --- |
+| Source → draft | Extract and normalize suggestions, retain uncertainty | `features/data-management/event-ocr/` |
+| Sheet → stored event | Validate rows and preserve event keys | `features/data-management/csv/`, `features/data-management/validation/` |
+| Store → public event | Read, cache, and apply projections | `features/data-management/runtime-service.ts`, `data-manager.ts` |
+| Event → interaction | Filter, order, save, open details, track actions | `features/events/` |
+| Place → coordinate | Resolve venues independently of OCR | `features/locations/`, `features/maps/` |
+| Visitor → plan | Persist local routes and coordinate live sharing | `features/plans/` |
+| Request → privileged action | Validate sessions and rate-limit writes | `app/api/`, `features/security/` |
 
-### Staleness Semantics
+## Reads and recovery
 
-For cacheable public routes, stale content is cleared by admin save/revalidate
-flows and the deploy revalidation hook. Data correctness should be verified in
-the admin runtime cards and with public smoke checks after production changes.
+In `DATA_MODE=remote`, the source chain is:
 
-## Admin Console Contract
+```mermaid
+flowchart LR
+  A[Managed Postgres store] -->|unavailable or invalid| B[Latest backup in Postgres]
+  B -->|unavailable or invalid| C[Bundled event CSV]
+  A --> D[Validated runtime events]
+  B --> D
+  C --> D
+```
 
-Admin is split into focused surfaces:
+The backup is stored in Postgres too: it helps with damaged live event data, but it is not an independent database-outage fallback. The bundled CSV supplies that final fallback and may be stale. Runtime results retain their source and error context.
 
-- `/admin` overview hub
-- `/admin/operations` system/runtime controls
-- `/admin/content` event data, submissions, banner settings
-- `/admin/placements` paid queue + spotlight/promoted scheduling
-- `/admin/insights` analytics and audience tools
+`DATA_MODE=local` reads only the bundled CSV; `test` uses fixtures. Archive mode forces local reads outside test mode and disables live account and write workflows. [Archive operations](../operations/archive-mode.md) describe its flags and support snapshots.
 
-## Auth Contract
+## Rendering and browser state
 
-- Public user session: `oooc_user_session`, managed through auth context
-- Admin session: server-validated and required for admin routes/actions/APIs
-- Header/UI auth hints should come from centralized session state
+Next.js owns route rendering and server data access. Cache policy belongs to each route and to the runtime data cache; a single “static-first” label does not describe every page. The live finder and planner use dynamic routes while event data can be cached separately. Admin save and revalidation flows invalidate public data.
 
-## Data Contract
+The event client is an orchestration shell around smaller list, filter, summary, map, modal, and auth islands. Maps load independently so a failed map does not make the list unusable.
 
-Runtime event reads flow through:
+For offline recovery, the service worker caches approved public shells and assets; IndexedDB stores validated event snapshots. It excludes auth, admin, user, cron, webhook, and other sensitive surfaces. A first successful online visit is required. Coordinates in an archive do not make map tiles available offline. [Offline access](offline-access-goals.md) records the implementation and limits.
 
-1. `features/data-management/runtime-service.ts#getLiveEvents()`
-2. `features/data-management/data-manager.ts#getEventsData()`
-3. Source order based on mode:
-- `DATA_MODE=remote`: managed store first, then latest Postgres event-store backup, then bundled local CSV fallback
-- `DATA_MODE=local`: local CSV only
-- `DATA_MODE=test`: test fixture data
+## Auth, writes, and integrations
 
-Projection behavior in runtime service:
+Public account state is distinct from server-validated admin authentication. `/admin` groups work into content, placements, operations, and insights. Hiding a client control is not authorization: privileged actions must validate the server session.
 
-- Featured and promoted projection enabled by default
-- Engagement projection enabled by default (`socialProofSaveCount` hydration from fresh, session-deduped calendar syncs, plus a 30-day historical fallback count for generic proof)
+Postgres holds event rows, scheduling, engagement aggregates, settings, submissions, and other live state. User-facing actions cross explicit HTTP or server-action boundaries with abuse controls. Provider keys stay server-side.
 
-## Engagement Tracking Contract
+Gemini assists draft extraction. Google geocoding resolves venue coordinates. Stripe webhook intake and ticket-exchange bot endpoints serve specific operational workflows; they are not the social collection orchestrator. The separate `fete-bot` project manages WhatsApp community workflows and connects to the ticket exchange.
 
-- `POST /api/analytics/event` records event actions (`click`, `outbound_click`, `calendar_sync`)
-- `POST /api/analytics/discovery` records search/filter behavior
-- `POST /api/user/preferences` records authenticated genre preferences
-- "saved this" UX maps to session-deduped `calendar_sync` counts, with numeric copy reserved for the top fresh public social-proof events
+## Seasonal deployment
 
-## Canonical Stores
+The Next.js app supports both live and archive behavior. The checked-in root Dockerfile on this documentation branch serves `railway-placeholder/` with Caddy, a separate lightweight off-season holding page. Running `pnpm dev` starts the full application. A Docker deployment and a local app demo therefore do not necessarily show the same experience.
 
-- Event store: `app_event_store_columns`, `app_event_store_rows`, `app_event_store_meta`, `app_event_store_settings`
-- Scheduling: `app_featured_event_schedule`, `app_promoted_event_schedule`
-- Engagement: `app_event_engagement_stats`, `app_discovery_analytics_stats`, `app_user_genre_preferences`
-- Other app state: `app_kv_store`, `app_event_submissions`, `app_rate_limit_counters`, `app_partner_activation_queue`
+Confirm the build configuration and running service before making deployment claims; repository support for a mode does not establish that it is deployed.
 
-## Code Map
+## Read further
 
-- `app/` routes and route handlers
-- `features/data-management/` runtime orchestration + admin write actions
-- `features/events/` event domain logic, UI, tracking actions
-- `features/events/featured/` spotlight scheduling
-- `features/events/promoted/` promoted scheduling
-- `features/partners/` activation queue + partner stats
-- `features/security/` rate limiting and anti-abuse primitives
-- `lib/platform/` logging, KV adapters, Postgres repositories
-
-## Related Docs
-
-- [Event Identity](./event-identity.md)
-- [Engagement Tracking](./engagement-tracking.md)
-- [Admin Workflow](../operations/admin-workflow.md)
-- [Rate Limiting](../security/rate-limiting.md)
-- [API Endpoints](../reference/api-endpoints.md)
+[Identity](event-identity.md) · [Intake](event-intake.md) · [Engagement](engagement-tracking.md) · [Locations](../integrations/geocoding.md) · [Admin operations](../operations/admin-workflow.md) · [Rate limiting](../security/rate-limiting.md)
