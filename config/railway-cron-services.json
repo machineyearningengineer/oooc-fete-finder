@@ -1,7 +1,7 @@
 {
 	"projectId": "762c1d14-1d6a-4171-9c6b-dfd216c9a12f",
 	"environmentName": "production",
-	"repo": "KingPsychopath/oooc-fete-finder",
+	"repo": "machineyearningengineer/oooc-fete-finder",
 	"branch": "main",
 	"runner": {
 		"buildCommand": "true",
