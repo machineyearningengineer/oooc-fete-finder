@@ -1,6 +1,6 @@
-# Featured Events Scheduler
+# Featured events scheduler
 
-Featured events are now managed by a dedicated Postgres-backed scheduler.
+Featured events are managed by a dedicated Postgres-backed scheduler.
 
 ## Source of truth
 
@@ -8,7 +8,7 @@ Do not use the retired `Featured` CSV column to activate featuring.
 
 - Canonical source: `app_featured_event_schedule`
 - Canonical key: `eventKey`
-- Admin control surface: `/admin` -> `Featured Events Manager`
+- Admin control surface: `/admin/placements` → Spotlight & Promoted Scheduler
 
 ## Queue model
 
@@ -16,6 +16,7 @@ Do not use the retired `Featured` CSV column to activate featuring.
 - Default duration: `48` hours
 - Scheduling timezone: `Europe/Paris`
 - If more than 3 events are scheduled, overflow entries are queued by:
+
 1. `requested_start_at`
 2. `created_at`
 3. `event_key`
@@ -42,7 +43,7 @@ Implemented server actions:
 
 These actions revalidate both `/` and `/feature-event` after mutation.
 
-## Strict cutover guardrail
+## Retired CSV column
 
 CSV and sheet-save flows reject non-empty retired `Featured` values with:
 

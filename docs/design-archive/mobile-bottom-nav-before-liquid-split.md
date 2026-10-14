@@ -1,16 +1,11 @@
-# Mobile Bottom Nav Before Liquid Split
+# Earlier mobile navigation
 
-Archived reference for the pre-split mobile bottom navigation design.
+The navigation before the liquid-split experiment is retained at commit `6046056408b8231b7c7ba1f78f5e823a7691bb90` and branch `feature/archive-mobile-nav-before-liquid-split`.
 
-- Archive branch: `feature/archive-mobile-nav-before-liquid-split`
-- Source commit: `6046056408b8231b7c7ba1f78f5e823a7691bb90`
-- Source ref: `origin/main` before the `new-nav-bar` experiment
+Compare its implementation with the current checkout:
 
-Useful commands:
-
-```bash
-git diff feature/archive-mobile-nav-before-liquid-split..new-nav-bar -- components/MobileBottomNav.tsx app/globals.css
-git restore --source feature/archive-mobile-nav-before-liquid-split -- components/MobileBottomNav.tsx app/globals.css
+```sh
+git diff 6046056408b8231b7c7ba1f78f5e823a7691bb90..HEAD -- components/MobileBottomNav.tsx app/globals.css
 ```
 
-The archive branch is intentionally separate from the app code so the old design stays easy to recover without shipping duplicate UI.
+Use the commit as a design reference. Restoring whole files would also replace later behavior, so port only the parts needed for a revision. The branch keeps the reference without shipping duplicate UI.

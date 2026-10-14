@@ -1,40 +1,29 @@
-# A useful guide for a city-wide music weekend
+# Product goals
 
-Fête Finder exists to reduce the work between hearing about an event and deciding to go. Out Of Office Collective supplies the curation; the product makes a wider set of listings searchable, comparable, and shareable.
+Fête Finder helps people choose events during Fête de la Musique in Paris. Out Of Office Collective provides the curation; search, maps, saved events, and routes help visitors make a plan.
 
-## What a good experience looks like
+## For visitors
 
-1. Find music that fits your taste and the day you are in Paris.
-2. Understand the place, time, price, and setting without piecing together several posts.
-3. Keep a shortlist and arrange the stops you want to make.
-4. Send a friend a link that opens the same event or a shared route.
-5. Recover useful saved information when connectivity drops.
+- Find music by date, genre, price, and area.
+- See the time and place together, with a link to the original listing.
+- Keep a shortlist and arrange stops into a route.
+- Send a friend a stable event or shared-plan link.
+- Recover previously loaded listings when connectivity drops.
 
-The operator's corresponding job is to get messy source material into a trustworthy catalogue without manually retyping every flyer. Extraction speeds up drafting; uncertainty stays visible until someone reviews it.
+## For editors
 
-## Design choices
+Import event rows or upload flyers, review extracted details, and publish through the event sheet. Missing dates, conflicting suggestions, and uncertain venues need review. OCR reduces retyping; it does not approve listings.
 
-**A guide with a point of view.** OOOC Picks sit alongside discovery filters. Curation and paid placement have separate domain logic; do not imply that a paid slot proves event quality.
+OOOC Picks and paid placements have separate scheduling logic. A paid slot describes placement, not a quality assessment.
 
-**Readable before decorative.** The site uses Prata headings, Degular body text, warm paper, and restrained ink and accent colours. Motion should clarify a journey or a state change. It should leave room to read.
+## Limits and next work
 
-**A small decision surface.** Show the details needed to choose a place, then let the visitor open the original listing, directions, or calendar. Missing information should remain missing or visibly uncertain.
-
-**Useful after the season.** A frozen archive can retain browsing and local plans without maintaining live accounts, analytics writes, or submission intake. The holding page and archive app are distinct deployment choices.
-
-## Scope and boundaries
-
-The app implements discovery, event and route links, maps, admin editing, placement scheduling, first-party engagement tracking, an OCR draft workflow, and a ticket-exchange surface. Availability depends on runtime mode.
-
-It is not a guarantee of admission, availability, or unchanged event details. An external ticketing page owns the purchase. Geocoding produces a coordinate candidate, not proof that a flyer named the right venue. AI confidence is a review signal, not measured factual accuracy.
-
-## Remaining decisions
-
-| Goal | Current boundary | Next useful evidence |
+| Area | Current limit | Work to resolve it |
 | --- | --- | --- |
-| Reliable intake | Collection orchestration lives outside the app runtime | Identify the scheduler, monitored sources, retries, and connector handoff |
-| Better draft quality | Field evidence and alternatives exist; human review remains essential | Review a representative set of flyers and record corrections by field |
-| Useful offline browsing | Previously saved listings and details can recover; true offline map tiles are absent | Exercise reload, stale storage, and reconnect in a production build |
-| A clear seasonal lifecycle | Both archive logic and a static holding page exist | Verify the deployed mode and test restoration before the next season |
+| Extraction | Confidence comes from the model | Compare draft fields with a reviewed sample and record corrections |
+| Offline use | Saved listings and details can recover; map tiles still need a connection | Test storage pressure, stale snapshots, and reconnect |
+| Seasonal hosting | The app supports archive mode; the root Dockerfile builds a holding page | Verify the chosen mode and restoration path before the next season |
 
-These are goals and evidence to collect, not claimed outcomes or a promised roadmap. [See the implementation boundaries](../architecture/overview.md).
+Ticket purchases happen on external sites. Venue coordinates and event details can change, so original sources remain part of the guide.
+
+[Architecture](../architecture/overview.md) · [Design](../../DESIGN.md)

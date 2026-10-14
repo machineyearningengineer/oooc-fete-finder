@@ -1,181 +1,72 @@
-# Production Readiness
+# Production readiness
 
-Use this checklist before a production deploy, after high-risk admin changes, or
-when investigating production behavior.
+Check the build target before treating a deployment as the full application.
 
-## Deployment Target
+| Target | Build | Live services |
+| --- | --- | --- |
+| Holding page | Root Dockerfile → Caddy | Static files only |
+| Archive app | Next.js build with both archive flags enabled | Bundled events and local browser state |
+| Live app | Next.js build with archive flags disabled | Postgres, auth, admin, and configured integrations |
 
-The app is Railway-oriented. Read-only Railway inspection is safe for production
-issues: status, deploy/build/runtime/HTTP logs, domains, and environment-variable
-presence checks. Ask before paid, destructive, secret-revealing, or
-infrastructure-changing actions.
+The repository contains all three paths. The selected deployment configuration determines which one runs. [Archive operations](archive-mode.md) cover the snapshot files and flags; [holding-page notes](../../railway-placeholder/README.md) cover Caddy.
 
-## Runtime Policy
+## Live configuration
 
-- Production and preview runtime data should be Postgres-backed.
-- `DATABASE_URL` must be present and healthy when `DATA_MODE=remote`.
-- Runtime disk persistence is not relied on for event, coordinate, admin,
-  analytics, plan, saved-event, submission, or rate-limit state.
-- Cron routes and deploy revalidation routes must be token-protected.
-- Admin routes and admin APIs must stay server-authenticated and dynamic.
+For a live app, verify `NODE_ENV=production`, `DATA_MODE=remote`, `DATABASE_URL`, `AUTH_SECRET`, and `NEXT_PUBLIC_SITE_URL`. Set `ADMIN_KEY` only when admin access should be enabled. Factory reset uses a separate `ADMIN_RESET_PASSCODE`.
 
-## Required Production Env
+Maintenance jobs need `CRON_SECRET`; deploy revalidation needs `DEPLOY_REVALIDATE_SECRET`. A public deployment identifier lets the admin UI detect a new build. Geocoding, OCR, Stripe, and bot integrations each need their own server-side configuration. See the [environment reference](../reference/environment-variables.md).
 
-Set and verify:
+Runtime disk is not the durable store for live events, coordinates, users, analytics, plans, submissions, or rate limits. Those workflows depend on Postgres.
 
-- `NODE_ENV=production`
-- `DATA_MODE=remote`
-- `DATABASE_URL`
-- `AUTH_SECRET`
-- `ADMIN_KEY` if admin access should be enabled
-- `ADMIN_RESET_PASSCODE` if factory reset should be available
-- `CRON_SECRET` for cron services
-- `DEPLOY_REVALIDATE_SECRET` for deploy revalidation
-- `NEXT_PUBLIC_SITE_URL` set to the production origin
-- `NEXT_PUBLIC_DEPLOYMENT_ID` set to a commit SHA or unique deploy identifier
+## Before release
 
-Optional but production-relevant:
+Run focused checks for the changed behavior first. Type checks and a production build cover changes to route rendering or application boundaries:
 
-- `GOOGLE_MAPS_API_KEY` for geocoding
-- `EVENT_OCR_API_KEY` or `GEMINI_API_KEY` for admin OCR drafts
-- `STRIPE_WEBHOOK_SECRET` and `STRIPE_PAYMENT_LINK_ID_*` for partner order ingestion
-- `TICKET_EXCHANGE_BOT_SECRET` for ticket-exchange bot endpoints
-
-The authoritative env list is [Environment Variables](../reference/environment-variables.md).
-
-## Pre-Deploy Checks
-
-Run the checks that match the change:
-
-```bash
-pnpm lint
-pnpm test
+```sh
 pnpm exec tsc --noEmit
 pnpm build
 ```
 
-For route-size and public HTML regressions:
+Use the repository's lint, unit, and browser checks for the affected files and journeys. Documentation-only changes need link, copy, and artwork checks rather than an application build.
 
-```bash
+The public-route size check and cron manifest check are available separately:
+
+```sh
 BASE_URL=http://localhost:3000 pnpm check:public-routes
-```
-
-For cron configuration drift:
-
-```bash
 pnpm check:railway-cron
 ```
 
-## Deploy Verification
+## After release
 
-After deploy:
+1. Confirm Railway's active deployment and the domain's target.
+2. Inspect build/runtime logs for environment, Postgres, fallback, and revalidation failures.
+3. Open the public home, a known event, `/exchange`, `/plans`, `/feature-event`, and `/submit-event` as appropriate for the selected mode.
+4. For live mode, confirm authenticated admin health, the expected deployment identifier, and the runtime data source.
+5. After editing content or placements, confirm the public event and effective schedule.
 
-1. Check Railway deployment status and build logs.
-2. Check runtime logs for env validation failures, database connection warnings,
-   revalidation failures, and Postgres fallback warnings.
-3. Confirm the production domain resolves to the new deployment.
-4. Call or open public smoke routes:
-   - `/`
-   - `/event/<known-event-key>`
-   - `/exchange`
-   - `/plans`
-   - `/feature-event`
-   - `/submit-event`
-5. Confirm admin access at `/admin`.
-6. Confirm `/api/admin/health` with admin authorization.
-7. Confirm `/api/admin/deployment-status` reports the expected deployment id.
-8. Confirm the homepage/runtime data source is live Postgres in admin runtime cards.
+The [API reference](../reference/api-endpoints.md) lists the health and deployment-status endpoints. A holding page redirect does not establish that an app route works.
 
-## Deferred Cleanup
+## Maintenance jobs
 
-- Added 2026-06-03: auth marketing preference now uses soft opt-in via
-  `marketingOptedOut` in the email gate UI and `/api/auth/verify`.
-- Keep the legacy `marketingConsent` request-field compatibility path for at
-  least one production deploy cycle so old open tabs or cached bundles can still
-  submit the wording they saw.
-- Cleanup is safe when production has run the new build long enough for old
-  clients to age out, service-worker/frontend cache behavior has been checked,
-  and logs show no `/api/auth/verify` requests still submitting
-  `marketingConsent`.
-- When safe, remove `marketingConsent` from the verify route schema and legacy
-  auth verify test, leaving `marketingOptedOut` as the only client preference
-  field.
+[config/railway-cron-services.json](../../config/railway-cron-services.json) records the intended cron services. The live schedules use UTC:
 
-## Cron Verification
+| Endpoint | Schedule |
+| --- | --- |
+| `/api/cron/cleanup-admin-sessions` | `0 4 * * *` |
+| `/api/cron/cleanup-rate-limits` | `10 4 * * *` |
+| `/api/cron/backup-event-store` | `20 4 * * *` |
+| `/api/cron/cleanup-dismissed-partner-reports` | `30 4 * * *` |
 
-Railway cron services should match `config/railway-cron-services.json`.
+Calls require `Authorization: Bearer <CRON_SECRET>`. The trigger script uses `TARGET_URL` and the injected secret. Enable jobs for the live service that needs them; pause them when parking that service.
 
-Expected cron endpoints:
+## Older client compatibility
 
-- `/api/cron/cleanup-admin-sessions` at `0 4 * * *`
-- `/api/cron/cleanup-rate-limits` at `10 4 * * *`
-- `/api/cron/backup-event-store` at `20 4 * * *`
-- `/api/cron/cleanup-dismissed-partner-reports` at `30 4 * * *`
+The auth verify route still accepts legacy `marketingConsent` alongside `marketingOptedOut`. Remove that compatibility path only after deployed client/cache behavior and request logs show it is no longer needed. It supports older open tabs, not a second preference model.
 
-All require `Authorization: Bearer <CRON_SECRET>`. Cron service commands should
-use `node scripts/railway-cron-trigger.mjs` with `TARGET_URL` and `CRON_SECRET`.
+## Recovery
 
-## Post-Season Parking
+Inspect the deployment, logs, route status, runtime source, and recent admin changes before choosing a recovery action. For a bad build, restore the previous known-good deployment. For damaged event data, restore a selected backup and revalidate. For database unavailability, bundled CSV reads can preserve browsing but do not restore live account or write workflows.
 
-When Fête week is over and the site is staying online with low traffic:
+Before parking a season, create and verify a backup, refresh the bundled event/support snapshots, and decide whether submissions stay open. Do not stop a shared database while another service still needs it.
 
-1. Keep `DATA_MODE=remote` and `DATABASE_URL` configured so admin state,
-   submissions, plans, analytics, and backups remain backed by Postgres.
-2. Keep the four cron services enabled. They are bounded cleanup/backup jobs,
-   and daily event-store backups prune to the retention limit.
-3. Refresh the bundled fallback after the final accepted event-store state:
-   `pnpm db:pull-events-csv`.
-4. Run one manual backup from `/admin/operations`, then verify the latest backup
-   appears before leaving the site unattended.
-5. Use `/admin/content` to decide whether new event submissions and update
-   requests stay open for next-season intake or close until planning resumes.
-6. Use `/admin/content` to turn off dynamic search chips if recent search data
-   feels stale after traffic drops.
-7. Use `/admin/content` to set or disable the sliding banner. The code fallback
-   is post-season safe, but stored KV settings win in production.
-8. Smoke-test `/`, `/exchange`, `/plans`, `/plans/fete`,
-   `/plans/fete-2026`, `/submit-event`, and `/feature-event`.
-9. Confirm Railway cron config drift locally with `pnpm check:railway-cron`.
-
-## Admin Publish Flow
-
-For event data or placement changes:
-
-1. Save changes in `/admin/content` or `/admin/placements`.
-2. Use `/admin/operations` to verify data-store status.
-3. Run backup before risky changes and after important publish changes.
-4. Trigger revalidation from the admin flow or deploy hook as appropriate.
-5. Smoke-test the public route and one event detail route.
-
-## Incident Triage
-
-For production issues, inspect in this order:
-
-1. Railway status and active deployment.
-2. Runtime logs for env, Postgres, revalidation, and fallback warnings.
-3. HTTP logs for status patterns and affected routes.
-4. Domain configuration and TLS state.
-5. Admin health and data-store status.
-6. Recent admin activity and backup availability.
-
-Prefer read-only checks first. Do not rotate secrets, alter domains, restart
-services, change paid infrastructure, delete data, or run destructive admin
-actions without explicit approval.
-
-## Rollback And Recovery
-
-Fast recovery options:
-
-- Roll back to the previous Railway deployment if the build is bad.
-- Restore the latest known-good event-store backup in `/admin/operations`.
-- Re-run deploy revalidation after restore.
-- As an emergency-only data fallback, set `DATA_MODE=local` to serve bundled CSV
-  data. This does not exercise Postgres-backed admin state, analytics, plans,
-  saved events, submissions, or rate limits.
-
-After recovery, refresh the bundled fallback CSV from the managed store before
-the next release:
-
-```bash
-pnpm db:pull-events-csv
-```
+[Admin workflow](admin-workflow.md) · [Postgres recovery](postgres-setup-and-recovery.md) · [Logging](logging-and-observability.md)

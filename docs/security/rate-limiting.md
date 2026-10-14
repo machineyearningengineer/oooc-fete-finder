@@ -1,8 +1,8 @@
-# Security: Rate Limiting
+# Security: rate limiting
 
 Public write and tracking endpoints are protected with in-app Postgres-backed atomic counters. Edge WAF can still be layered for additional protection.
 
-## Endpoints Covered
+## Endpoints covered
 
 - `POST /api/auth/verify`
 - `POST /api/event-submissions`
@@ -10,7 +10,7 @@ Public write and tracking endpoints are protected with in-app Postgres-backed at
 - `POST /api/analytics/discovery`
 - `POST /api/user/preferences`
 
-## Auth Verify Limits
+## Auth verify limits
 
 `POST /api/auth/verify`
 
@@ -19,7 +19,7 @@ Public write and tracking endpoints are protected with in-app Postgres-backed at
 - Block response: `429` + `Retry-After`
 - Limiter unavailable behavior: fail-open (request allowed)
 
-## Event Submission Limits
+## Event submission limits
 
 `POST /api/event-submissions`
 
@@ -29,7 +29,7 @@ Public write and tracking endpoints are protected with in-app Postgres-backed at
 - Block response: `429` + `Retry-After`
 - Limiter unavailable behavior: fail-closed (`503`)
 
-## Tracking Limits
+## Tracking limits
 
 `POST /api/analytics/event`
 
@@ -48,7 +48,7 @@ Public write and tracking endpoints are protected with in-app Postgres-backed at
 - IP: `120 requests / 60 seconds`
 - Invalid/unauthenticated requests are accepted-noop (`202`)
 
-## Submission Abuse Checks
+## Submission abuse checks
 
 For event submissions, additional checks include:
 
@@ -56,7 +56,7 @@ For event submissions, additional checks include:
 - Minimum completion-time signal
 - Spam-signaled payload moderation flags
 
-## Data and Privacy
+## Data and privacy
 
 - Counter table: `app_rate_limit_counters`
 - Limiter keys are HMAC-hashed with `AUTH_SECRET`

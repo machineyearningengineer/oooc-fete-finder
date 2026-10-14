@@ -1,8 +1,8 @@
-# Event Identity (`eventKey`)
+# Event identity (`eventKey`)
 
 This app uses a stable event identity model so shared links survive row reorders and content edits.
 
-## Core Model
+## Core model
 
 Each event has:
 
@@ -12,7 +12,7 @@ Each event has:
 
 Only `eventKey` is canonical for lookup.
 
-## URL Contract
+## URL contract
 
 Public share links use:
 
@@ -22,25 +22,25 @@ The route resolves the event by `eventKey`, renders event-specific share metadat
 
 For example, `/event/evt_ab12cd34ef56/example-event-name/` still resolves by the key if the title or slug changes.
 
-## CSV + Admin Behavior
+## CSV + admin behavior
 
 - CSV imports accept `Event Key` column aliases and map to `eventKey`
 - Missing/invalid keys are generated and persisted on save/import
 - CSV exports include `Event Key`
 - In admin editor, `Event Key` is read-only
 
-## Determinism Rules
+## Determinism rules
 
 - Existing valid `eventKey` is preserved across edits
 - Missing keys are generated from normalized row content
 - Collisions are resolved deterministically
 
-## What Breaks Existing Links
+## What breaks existing links
 
 1. Manually changing/removing an existing `Event Key`
 2. Importing CSV data without `Event Key` after keys were already established
 3. Intentionally assigning a new identity for what should be treated as a different event
 
-## Operational Note
+## Operational note
 
 After enabling/refactoring identity behavior, run one admin save/import cycle so generated keys are persisted in store and future exports.

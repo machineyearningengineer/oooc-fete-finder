@@ -1,23 +1,23 @@
-# Postgres Setup And Recovery
+# Postgres setup and recovery
 
 Use this for first-time setup, production-parity local setup, backup review, or
 restore.
 
-## Target State
+## Target state
 
 - Primary runtime source: managed Postgres event store
 - Fallback sources in remote mode: latest Postgres event-store backup, then bundled local CSV (`data/events.csv`)
 - Bundled CSV is a server-side emergency fallback. It is deployment-time data, not a live sync or full browser offline cache.
-- Local production-parity development uses `DATA_MODE=remote` against Postgres. `DATA_MODE=local` exists only for fallback/no-database testing.
+- Local production-parity development uses `DATA_MODE=remote` against Postgres. `DATA_MODE=local` is used for fallback testing, no-database browsing, and archive mode.
 
-## Required Env
+## Required env
 
 - `DATABASE_URL`
 - `AUTH_SECRET`
 - `DATA_MODE=remote`
 - `ADMIN_KEY` if admin auth is enabled
 
-## First-Time Setup
+## First-Time setup
 
 1. Create/connect Postgres and set `DATABASE_URL`.
 2. Open `/admin`.
@@ -27,12 +27,12 @@ restore.
 6. Run `Save and Revalidate Homepage`.
 7. Verify source/status in admin runtime cards.
 
-## CLI Bootstrap
+## CLI bootstrap
 
-For a new local or preview database:
+For a new development database, configure its connection through the project's development environment before running:
 
 ```bash
-DATABASE_URL=... pnpm bootstrap:postgres-store
+pnpm bootstrap:postgres-store
 ```
 
 For local workflow policy and release fallback refresh steps, see [Local Data Workflow](./local-data-workflow.md).

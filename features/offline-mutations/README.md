@@ -1,22 +1,7 @@
-# Offline Mutation Queue
+# Offline mutation queue
 
-This queue is for user-visible state changes that must survive offline mode and retry later.
+[pending-mutation-queue.ts](pending-mutation-queue.ts) persists save/unsave event changes for retry after a connection returns. Its current consumer is `saved_event`.
 
-Current consumer:
+Every mutation is scoped by `ownerKey` and carries an idempotency key. Compact repeated desired-state changes with last-write-wins behavior, so a later unsave supersedes an earlier save.
 
-- `saved_event` for save/unsave event state.
-
-When adding future stateful writes, add a mutation type only after the product surface exists. Expected future consumers:
-
-- route edits
-- itinerary ordering
-- notify-me toggles
-- user-facing profile or preference writes
-
-Best-practice rules:
-
-- Scope every mutation by `ownerKey` so account state never bleeds between users.
-- Include an idempotency key.
-- Compact last-write-wins mutations when possible.
-- Keep analytics queues separate from state mutation queues.
-- Prefer server endpoints that accept final desired state, not fragile action replay.
+Keep analytics queues separate. Add a new mutation type when its product flow exists, and prefer a server endpoint that accepts the final desired state over replaying a sequence of actions.

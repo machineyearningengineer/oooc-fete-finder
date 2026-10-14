@@ -1,8 +1,6 @@
-# Archive Mode
+# Archive mode
 
-Archive mode is a dormant off-season runtime for a frozen public Fete Finder
-archive. It is implemented but should stay disabled until the production event
-CSV and static archive support data have been refreshed from the live database.
+Archive mode runs a frozen guide from bundled data. Refresh the event CSV and support snapshots before using it for a production archive. The root Dockerfile builds a separate [holding page](../../railway-placeholder/README.md); enabling archive flags alone does not change that build.
 
 ## Flags
 
@@ -19,7 +17,7 @@ controls server behavior, and `NEXT_PUBLIC_ARCHIVE_MODE` controls bundled
 client behavior. `ARCHIVE_MODE=true` forces event reads to the bundled CSV even
 if `DATA_MODE=remote` remains set.
 
-## What Still Works
+## What still works
 
 - Public event browsing, search, filters, maps, event detail pages, and static
   assets.
@@ -35,7 +33,7 @@ if `DATA_MODE=remote` remains set.
   and archive behavior.
 - Local app settings, theme, and map preference controls.
 
-## What Is Disabled
+## What is disabled
 
 - Login, user sessions, saved-account data, user app-setting sync, notices, and
   saved event sync.
@@ -48,7 +46,7 @@ if `DATA_MODE=remote` remains set.
   webhook ingestion, cron database maintenance, and Ticket Exchange bot writes.
 - Full admin dashboard and admin write workflows.
 
-## Enable Checklist
+## Enable checklist
 
 1. Refresh `data/events.csv` from production while Postgres is still connected:
 
@@ -79,7 +77,7 @@ NEXT_PUBLIC_ANALYTICS_ENABLED=false
 NEXT_TELEMETRY_DISABLED=1
 ```
 
-5. Leave `DATA_MODE=remote` if you want a one-command rollback, or set
+5. Leave `DATA_MODE=remote` to retain the configured live data mode, or set
    `DATA_MODE=local` for clarity. Archive mode forces local reads either way.
 6. After deploy, check `/admin`, `/exchange`, `/plans`, `/plans/fete`,
    `/submit-event`, and
@@ -88,7 +86,7 @@ NEXT_TELEMETRY_DISABLED=1
    after exporting a backup. Keep the Railway database only if you still need
    admin/history access.
 
-## Login Behavior
+## Login behavior
 
 Archive mode treats every visitor as signed out. The client auth provider clears
 offline auth grace, does not fetch a live session, and hides login/logout/admin
@@ -97,8 +95,6 @@ signed-out response with `archiveMode: true` and clears the user auth cookie.
 Lookup and verification endpoints return archive-disabled errors, so no login
 codes are sent or accepted.
 
-## Rollback
+## Restore live mode
 
-Set both archive flags back to `false`, restore `NEXT_PUBLIC_ANALYTICS_ENABLED`
-to `true`, and redeploy. Keep `DATABASE_URL` and `DATA_MODE=remote` available if
-you want login/admin/exchange to come back immediately.
+Build and deploy the Next.js app with both archive flags `false` and analytics enabled at build time and runtime. Restore `DATA_MODE=remote` and the live Postgres service, then verify login, admin, exchange, and required cron jobs. Public environment flags are bundled during the build; changing runtime variables alone is insufficient.

@@ -36,6 +36,6 @@ Fête Finder turns scattered event information into a guide people can use toget
 
 ## Supporting material
 
-[Artwork source and rendering](assets/README.md) explain the README animation. [Design history](design-archive/mobile-bottom-nav-before-liquid-split.md) retains a recoverable navigation reference; it is not the current design specification.
+[Artwork and downloads](assets/README.md) cover the route animation and request-flow diagram. [Design history](design-archive/mobile-bottom-nav-before-liquid-split.md) retains a recoverable navigation reference; it is not the current design specification.
 
 Product goals describe intent. Architecture describes implemented contracts. Runbooks describe procedures, not proof of a current deployment. Update the owning document when behavior changes; keep test reports dated and avoid turning them into permanent guarantees.

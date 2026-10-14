@@ -1,6 +1,6 @@
-# Environment Variables
+# Environment variables
 
-## Archive Mode
+## Archive mode
 
 - `ARCHIVE_MODE`: Server-side archive switch. Defaults to `false`. When `true`,
   event reads are forced to the bundled CSV and database-backed writes are
@@ -16,7 +16,7 @@ Validation schema for core runtime variables: `lib/config/env.ts`.
 Some optional diagnostics and maintenance-script variables are read directly from
 `process.env` and are still listed here and in `.env.example`.
 
-## Server Variables
+## Server variables
 
 | Variable | Required | Default | Notes |
 | --- | --- | --- | --- |
@@ -36,7 +36,7 @@ Some optional diagnostics and maintenance-script variables are read directly fro
 | `EVENT_OCR_MODEL` | No | `gemini-2.5-flash-lite` | OCR vision model name passed to the selected provider |
 | `EVENT_OCR_API_KEY` | No | - | Generic OCR provider API key; preferred for provider-agnostic config |
 | `GEMINI_API_KEY` | No | - | Gemini-specific fallback key when `EVENT_OCR_API_KEY` is unset |
-| `EVENT_OCR_TIMEOUT_MS` | No | `25000` | Per-image OCR provider timeout |
+| `EVENT_OCR_TIMEOUT_MS` | No | `25000` | Per-call OCR provider timeout (one image or a combined batch) |
 | `CRON_SECRET` | No | - | Protects cron endpoints |
 | `DEPLOY_REVALIDATE_SECRET` | No | - | Protects deploy revalidation endpoint |
 | `STRIPE_WEBHOOK_SECRET` | No | - | Verifies Stripe webhook events for partner activation ingestion |
@@ -51,7 +51,7 @@ Some optional diagnostics and maintenance-script variables are read directly fro
 | `TICKET_EXCHANGE_EXAMPLES_ENABLED` | No | `true` | Shows non-actionable example cards when the public exchange board is empty; set to `false` to hide |
 | `TICKET_EXCHANGE_BOT_SECRET` | No | - | Protects Ticket Exchange bot-only endpoints |
 
-## Client Variables
+## Client variables
 
 | Variable | Default | Notes |
 | --- | --- | --- |
@@ -86,7 +86,7 @@ Some optional diagnostics and maintenance-script variables are read directly fro
 and analytics sample rates are optional runtime reads and are listed in
 `.env.example`; they are intentionally not required for local development.
 
-## Provider And Test Variables
+## Provider and test variables
 
 These values are read when the platform or tooling provides them. They are not
 required app configuration and generally should not be set by hand in local
@@ -103,7 +103,7 @@ required app configuration and generally should not be set by hand in local
 - `PLAYWRIGHT_BASE_URL`: optional e2e target for Playwright; defaults to
   `http://localhost:3000`.
 
-## Maintenance Script Variables
+## Maintenance script variables
 
 | Variable | Default | Notes |
 | --- | --- | --- |
@@ -121,13 +121,13 @@ required app configuration and generally should not be set by hand in local
 | `USER_ID_DRIFT_ALLOWED_MALFORMED_IDS` | `0` | Allowed recent malformed identity values |
 | `USER_ID_SESSION_LOOKBACK_DAYS` | `30` | Session mapping window for user identity backfills |
 
-## Production Notes
+## Production notes
 
 - In `NODE_ENV=production`, missing `DATA_MODE` triggers startup failure
 - For Postgres-backed runtime behavior, set `DATABASE_URL` and `DATA_MODE=remote`
 - In local development, startup fails if shell env already has different critical values than the project env file, currently `DATABASE_URL` or `DATA_MODE`. Run `unset DATABASE_URL` / `unset DATA_MODE` before `pnpm dev`, or set `ALLOW_LOCAL_ENV_OVERRIDE=1` for an intentional one-off override.
 
-## Secret Generation
+## Secret generation
 
 ```bash
 openssl rand -base64 48  # AUTH_SECRET / CRON_SECRET / DEPLOY_REVALIDATE_SECRET

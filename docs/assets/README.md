@@ -1,21 +1,25 @@
-# Documentation artwork
+# Artwork and downloads
 
-The README route study uses the site's Prata and Degular fonts and its paper (`#f4eedf`), forest ink (`#243d30`), coral (`#b84a31`), and ochre (`#a9782d`) palette. These match the archive design in the working site. There are no external images or generated illustrations.
+The diagrams use the site's Prata and Degular fonts, paper, forest ink, coral, and ochre. [DESIGN.md](../../DESIGN.md) records the palette and layout rules.
 
-- `finder-route.gif`: a nine-second, single-play route study. Static copy stays readable while pins and a route appear. Times and stops are illustrative; the map is schematic.
-- `finder-route.png`: the complete still, also linked beside the animation.
-- `system-map.png`: the system's responsibilities and recovery boundaries.
-- `intake-flow.png`: source material → draft → human review → publication.
-- Matching SVGs: editable vector stills. Text is rasterized into PNG/GIF with bundled fonts so GitHub rendering is consistent.
+| Artwork | Animation | Still | Editable vector |
+| --- | --- | --- | --- |
+| Paris route study | [GIF](finder-route.gif) | [PNG](finder-route.png) | [SVG](finder-route.svg) |
+| Public request and flyer processing | [GIF](system-map.gif) | [PNG](system-map.png) | [SVG](system-map.svg) |
+| Event intake | — | [PNG](intake-flow.png) | [SVG](intake-flow.svg) |
 
-The authoring source is [render-docs-artwork.mjs](../../scripts/render-docs-artwork.mjs). It uses the existing `@resvg/resvg-js` dependency. No application dependency or runtime code was added.
+The route study is schematic: its stops and times are illustrative. The request diagram traces the event-detail API and admin OCR path. OCR runs inside the request, not a background queue. Animation timing is illustrative too.
+
+Both GIFs play once. Text stays still while route lines or small request markers move. PNGs provide a motion-free version. GitHub cannot apply a viewer's reduced-motion preference to a GIF.
+
+## Render from source
+
+[render-docs-artwork.mjs](../../scripts/render-docs-artwork.mjs) uses the existing `@resvg/resvg-js` dependency and bundled fonts. After installing repository dependencies:
 
 ```sh
 node scripts/render-docs-artwork.mjs --stills-only
-# For the GIF, install ffmpeg locally, then:
+# With ffmpeg installed locally, render the animations too:
 node scripts/render-docs-artwork.mjs
 ```
 
-Run after installing the repo dependencies. The renderer works relative to its own file path, writes only these assets, and removes temporary animation frames. The GIF plays once to keep a long README quiet; its adjacent still provides a motion-free alternative. GitHub's image renderer cannot implement a viewer-specific reduced-motion setting for a GIF.
-
-When the site's design changes, update the palette and composition here rather than treating the docs artwork as a second design system.
+The script writes the assets listed above and removes temporary frame files. PNG/GIF text is rasterized for consistent GitHub display. SVG text remains editable and needs the same fonts for matching output.

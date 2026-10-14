@@ -1,4 +1,4 @@
-# Location Resolution
+# Location resolution
 
 ## Behavior
 
@@ -9,7 +9,7 @@
 - Nearby-event matching should use trusted `manual`/`geocoded` coordinates, not arrondissement centroids.
 - Map links prefer text search unless trusted coordinates are available.
 
-## Storage + Warmup
+## Storage + warmup
 
 - Coordinate cache is stored in KV under `maps:locations:v1`
 - Admin write operations can run a coordinate warm pass
@@ -17,13 +17,13 @@
 - Estimated entries can be upgraded later when geocoding becomes available
 - Runtime homepage reads do not mutate the coordinate cache
 
-## Enablement Checklist
+## Enablement checklist
 
 1. Enable Google Geocoding API in Cloud Console
 2. Ensure key is valid for Geocoding API
 3. Set `GOOGLE_MAPS_API_KEY` in env
 
-## Google Scope
+## Google scope
 
 Google is optional and currently used only as a geocoding provider.
 
