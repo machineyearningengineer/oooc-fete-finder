@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/geojson": "^7946.0.16",
     "@types/jsonwebtoken": "^9.0.10",
