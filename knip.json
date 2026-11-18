@@ -1,7 +1,9 @@
 {
   "$schema": "./node_modules/knip/schema.json",
   "entry": [
-    "scripts/railway-cron-trigger.mjs"
+    "scripts/railway-cron-trigger.mjs",
+    "scripts/generate-static-recap.mjs",
+    "scripts/render-docs-artwork.mjs"
   ],
   "exclude": [
     "exports",
