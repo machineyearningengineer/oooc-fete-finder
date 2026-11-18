@@ -12,12 +12,12 @@ This repo uses `pnpm`. This project preference is to use the global pnpm store (
 1) Use the global pnpm store (preferred):
 
 - Run `pnpm install` outside the sandbox / with unrestricted permissions so pnpm can write to `~/Library/pnpm/...`.
-- `pnpm test`
+- `pnpm build`
 
 2) If you explicitly want installs to work inside the sandbox, use a project-local store directory inside the repo:
 
 - `pnpm install --store-dir .pnpm-store`
-- `pnpm test`
+- `pnpm build`
 
 ## Guardrails
 

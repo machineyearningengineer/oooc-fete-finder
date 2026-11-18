@@ -30,10 +30,9 @@ pnpm db:pull-events-csv
 
 This reads `DATABASE_URL` and writes `data/events.csv`. It does not write to Postgres.
 
-After pulling, verify the fallback still parses and the app still builds:
+After pulling, check the app still builds, then run it with `DATA_MODE=local` and confirm the events load:
 
 ```bash
-pnpm test -- __tests__/integration/local-csv-fallback.test.ts
 pnpm build
 ```
 

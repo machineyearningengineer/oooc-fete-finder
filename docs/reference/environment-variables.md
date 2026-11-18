@@ -93,22 +93,19 @@ required app configuration and generally should not be set by hand in local
 `.env` files.
 
 - `NEXT_RUNTIME`: provided by Next.js runtime execution.
-- `CI`: provided by CI systems; Playwright uses it to choose retries/reporting.
+- `CI`: provided by CI systems.
 - `RAILWAY_DEPLOYMENT_ID`, `RAILWAY_GIT_COMMIT_SHA`, and
   `RAILWAY_ENVIRONMENT_NAME`: provided by Railway when available.
 - `VERCEL_DEPLOYMENT_ID`, `VERCEL_GIT_COMMIT_SHA`, and `VERCEL_URL`: supported
   as deployment-id fallbacks if a Vercel-like environment ever supplies them.
 - `BUILD_ID`: optional generic server-side build identifier when provider commit
   or deployment vars are absent.
-- `PLAYWRIGHT_BASE_URL`: optional e2e target for Playwright; defaults to
-  `http://localhost:3000`.
 
 ## Maintenance script variables
 
 | Variable | Default | Notes |
 | --- | --- | --- |
 | `BASE_URL` | `http://localhost:3000` | Used by health and public-route check scripts |
-| `PLAYWRIGHT_BASE_URL` | `http://localhost:3000` | Used by Playwright when tests target an existing server |
 | `TARGET_URL` | - | Required by `scripts/railway-cron-trigger.mjs` |
 | `EVENT_PATH` | Built-in sample event path | Route checked by `scripts/check-public-routes.mjs` |
 | `MAX_EVENT_HTML_BYTES` | `120000` | Event HTML budget for public-route checks |
