@@ -14,7 +14,9 @@ import { HomeEventsSection } from "./HomeEventsSection";
 import { HomeEventsSectionLoading } from "./HomeEventsSectionLoading";
 import { HomeHeader } from "./HomeHeader";
 
-// Public content is cacheable; account state stays in the client.
+// Archive: prerendered and revalidated every 30 minutes. Live season: the
+// connection() call in Home makes the build mark this route dynamic, so it
+// renders per request. Account state stays in the client either way.
 export const revalidate = 1800;
 export const metadata = isArchiveModeEnabled()
 	? generateOGMetadata({

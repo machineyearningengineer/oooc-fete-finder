@@ -1,3 +1,4 @@
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { isOffseasonPlaceholderEnabled } from "@/lib/offseason-placeholder";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -37,9 +38,20 @@ function isPublicAsset(pathname: string) {
 	);
 }
 
+// Live-season event pages render per request from app/live-event; the
+// /event route stays prerendered for the archive. See that route's page.tsx.
+function rewriteLiveEventPage(request: NextRequest) {
+	if (isArchiveModeEnabled()) return null;
+	const { pathname } = request.nextUrl;
+	if (!pathname.startsWith("/event/")) return null;
+	const url = request.nextUrl.clone();
+	url.pathname = `/live-event${pathname.slice("/event".length)}`;
+	return NextResponse.rewrite(url);
+}
+
 export function proxy(request: NextRequest) {
 	if (!isOffseasonPlaceholderEnabled()) {
-		return NextResponse.next();
+		return rewriteLiveEventPage(request) ?? NextResponse.next();
 	}
 
 	const { pathname } = request.nextUrl;
