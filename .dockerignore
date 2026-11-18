@@ -8,6 +8,7 @@ backups
 *.restore-list.txt
 design-references
 railway-placeholder
+.railway
 coverage
 test-results
 .vercel

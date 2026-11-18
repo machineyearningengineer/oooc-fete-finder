@@ -19,7 +19,8 @@
 		"server-only"
 	],
 	"ignore": [
-		"railway-placeholder/public/styles.css"
+		"railway-placeholder/public/styles.css",
+		".railway/**"
 	],
 	"ignoreExportsUsedInFile": true
 }
