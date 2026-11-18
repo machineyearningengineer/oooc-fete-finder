@@ -1,48 +1,51 @@
 import {
 	OFFICIAL_FETE_PLAN,
-	getOfficialFetePlanArchiveHref,
 	getOfficialFetePlanHref,
 } from "@/features/plans/official-plan-config";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { buildSiteUrl } from "@/lib/site-url";
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-	const lastModified = new Date();
+	const archive = isArchiveModeEnabled();
 
-	return [
+	const entries: MetadataRoute.Sitemap = [
 		{
 			url: buildSiteUrl("/"),
-			lastModified,
 			changeFrequency: "weekly",
 			priority: 0.9,
 		},
+		...(archive
+			? [
+					{
+						url: buildSiteUrl("/archive"),
+						changeFrequency: "yearly" as const,
+						priority: 0.8,
+					},
+				]
+			: []),
 		{
 			url: buildSiteUrl("/how-it-works"),
-			lastModified,
 			changeFrequency: "weekly",
 			priority: 0.8,
 		},
 		{
 			url: buildSiteUrl("/submit-event"),
-			lastModified,
 			changeFrequency: "weekly",
 			priority: 0.7,
 		},
 		{
 			url: buildSiteUrl("/feature-event"),
-			lastModified,
 			changeFrequency: "weekly",
 			priority: 0.7,
 		},
 		{
 			url: buildSiteUrl("/exchange"),
-			lastModified,
 			changeFrequency: "weekly",
 			priority: 0.6,
 		},
 		{
 			url: buildSiteUrl("/plans"),
-			lastModified,
 			changeFrequency: "weekly",
 			priority: 0.6,
 		},
@@ -50,13 +53,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			? [
 					{
 						url: buildSiteUrl(getOfficialFetePlanHref()),
-						lastModified,
-						changeFrequency: "yearly" as const,
-						priority: 0.5,
-					},
-					{
-						url: buildSiteUrl(getOfficialFetePlanArchiveHref()),
-						lastModified,
 						changeFrequency: "yearly" as const,
 						priority: 0.5,
 					},
@@ -64,15 +60,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			: []),
 		{
 			url: buildSiteUrl("/privacy"),
-			lastModified,
 			changeFrequency: "yearly",
 			priority: 0.2,
 		},
 		{
 			url: buildSiteUrl("/terms"),
-			lastModified,
 			changeFrequency: "yearly",
 			priority: 0.2,
 		},
 	];
+	return entries.filter(
+		(entry) =>
+			!archive ||
+			!["/exchange", "/submit-event"].some(
+				(path) => entry.url === buildSiteUrl(path),
+			),
+	);
 }

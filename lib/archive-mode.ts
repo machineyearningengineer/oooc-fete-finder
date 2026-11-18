@@ -24,3 +24,6 @@ export const getRuntimeDataMode = (
 	if (configuredMode === "test") return configuredMode;
 	return isArchiveModeEnabled() ? "local" : configuredMode;
 };
+
+export const getFinderHomePath = (): string =>
+	`${process.env.NEXT_PUBLIC_BASE_PATH || ""}${isArchiveModeEnabled() ? "/archive" : "/"}`;

@@ -1,0 +1,85 @@
+{
+  "source": "Production backup 2026-07-03T09:57:43Z",
+  "period": "June 2026",
+  "catalog": {
+    "events": 159,
+    "freeEvents": 78,
+    "lateNightEvents": 109,
+    "eventsWithLocation": 155,
+    "topGenres": [
+      {
+        "label": "Afrobeats",
+        "value": 85
+      },
+      {
+        "label": "Amapiano",
+        "value": 80
+      },
+      {
+        "label": "Hip Hop",
+        "value": 63
+      },
+      {
+        "label": "Dancehall",
+        "value": 52
+      },
+      {
+        "label": "Afro",
+        "value": 42
+      },
+      {
+        "label": "R&B",
+        "value": 40
+      }
+    ]
+  },
+  "pageViews": 54295,
+  "outboundClicks": 10270,
+  "saveToggles": 2855,
+  "mapOpens": 914,
+  "dailyActivity": [
+    {
+      "day": "2026-06-19",
+      "actions": 7844
+    },
+    {
+      "day": "2026-06-20",
+      "actions": 13280
+    },
+    {
+      "day": "2026-06-21",
+      "actions": 26378
+    },
+    {
+      "day": "2026-06-22",
+      "actions": 6177
+    }
+  ],
+  "topEvents": [
+    {
+      "eventKey": "evt_2dddda017f430e5f",
+      "title": "ONE2MANY DAYCLUB: Fete De La Musique Warm Up Party",
+      "totalActions": 830
+    },
+    {
+      "eventKey": "evt_0993c43c493b5559",
+      "title": "Damside FDLM Block Party ft. YeYe",
+      "totalActions": 560
+    },
+    {
+      "eventKey": "evt_aa4410eaf16ec01b",
+      "title": "Ascension Block Party",
+      "totalActions": 540
+    },
+    {
+      "eventKey": "evt_b6c6046f85aa3678",
+      "title": "SUMMER DISTRICT",
+      "totalActions": 500
+    },
+    {
+      "eventKey": "evt_eba7d3c50013f59c",
+      "title": "OFFLINE",
+      "totalActions": 485
+    }
+  ]
+}

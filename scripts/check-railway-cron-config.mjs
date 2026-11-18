@@ -101,9 +101,13 @@ if (railwayStatus) {
 			);
 			assertEqual(
 				actual.cronSchedule,
-				expected.schedule,
+				config.enabled === false ? null : expected.schedule,
 				`${expected.name} cron schedule`,
 			);
+			if (config.enabled === false) {
+				assertEqual(actual.nextCronRunAt, null, `${expected.name} has no scheduled run`);
+				continue;
+			}
 			assertEqual(
 				manifest.build?.buildCommand,
 				config.runner.buildCommand,

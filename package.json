@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
+  "packageManager": "pnpm@11.17.0",
   "engines": {
-    "node": "22.x"
+    "node": ">=26 <27"
   },
   "scripts": {
+    "secrets:recover": "node ops/secrets-recover.mjs",
+    "secrets:recover:test": "node --test ops/secrets-recover.test.mjs",
     "dev": "next dev --turbopack -H 127.0.0.1 -p ${PORT:-3000}",
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
@@ -36,6 +39,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
+    "@kitlangton/rolling-number": "^0.3.0",
     "@resvg/resvg-js": "^2.6.2",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@types/papaparse": "^5.5.2",
@@ -75,16 +79,5 @@
     "tw-animate-css": "^1.4.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
-  },
-  "pnpm": {
-    "overrides": {
-      "postcss": "8.5.10",
-      "protocol-buffers-schema": "3.6.1"
-    },
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "esbuild",
-      "sharp"
-    ]
   }
 }

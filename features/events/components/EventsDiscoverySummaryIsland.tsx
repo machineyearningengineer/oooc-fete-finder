@@ -1,4 +1,5 @@
 "use client";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 
 import { Button } from "@/components/ui/button";
 import EventStats from "@/features/events/components/EventStats";
@@ -57,8 +58,9 @@ export function EventsDiscoverySummaryIsland({
 							Discover events across the city
 						</h2>
 						<p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-							Browse current and archived Paris music events by arrondissement.
-							Use the 2026 archive when the live view is quiet.
+							{isArchiveModeEnabled()
+								? "Explore the 2026 Paris guide. Events have ended; browse the map, save favourites and make plans on this device."
+								: "Browse current and archived Paris music events by arrondissement. Use the 2026 archive when the live view is quiet."}
 						</p>
 						<Link
 							href="/how-it-works"

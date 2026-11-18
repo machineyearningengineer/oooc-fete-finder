@@ -1,22 +1,19 @@
-# Off-season holding page
+# Railway Placeholder
 
-The root [Dockerfile](../Dockerfile) serves this folder's HTML and CSS through Caddy. It does not run Next.js, client JavaScript, or Postgres.
+This directory retains the previous static off-season fallback: HTML and CSS
+served by Caddy. It is no longer the production deployment. The root Dockerfile
+now builds the 2026 recap and database-free Next.js archive.
 
-The [Caddyfile](Caddyfile) serves `/`, `/styles.css`, and `/favicon.svg`; other paths redirect to `/`. This is a holding page, separate from the application's [archive mode](../docs/operations/archive-mode.md).
+See [archive operations](../docs/operations/archive-mode.md) for the active
+configuration, snapshot provenance, verification, and live-season restoration.
 
-## Preview and build
+To preview the old fallback locally:
 
-From the repository root:
-
-```sh
-python3 -m http.server 8090 --bind 127.0.0.1 --directory railway-placeholder/public
-docker build -t oooc-fete-placeholder .
+```bash
+cd railway-placeholder/public
+python3 -m http.server 8090
 ```
 
-The local Python server previews the files; only the Caddy build exercises the redirect policy. The root [railway.json](../railway.json) selects the Docker deployment.
-
-## Seasonal changes
-
-Before stopping the full app, confirm the domain points to the intended service, export a database backup, and check whether any other service still needs Postgres. Pause maintenance cron jobs when the live app is not using the database.
-
-Restoring the full app requires its build configuration, Postgres, and the live-mode flags. Merely restarting the holding-page container will not restore the finder.
+Restoring this fallback requires a dedicated Caddy Dockerfile that copies this
+folder's public assets and uses its Caddyfile; `docker build ..` now builds the
+archive app instead.

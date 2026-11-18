@@ -1,5 +1,11 @@
+import {
+	ArchiveChrome,
+	ArchiveExperience,
+} from "@/features/recap/ArchiveExperience";
 import type { Metadata } from "next";
 import "./globals.css";
+import "@kitlangton/rolling-number/styles.css";
+import "@/features/recap/recap.css";
 import { AppSettingsSync } from "@/components/AppSettingsSync";
 import { FirstPartyAnalytics } from "@/components/FirstPartyAnalytics";
 import Footer from "@/components/Footer";
@@ -37,6 +43,7 @@ const siteStructuredData = {
 			"@id": `${siteUrl}/#website`,
 			url: siteUrl,
 			name: "Fête Finder",
+			inLanguage: "en-GB",
 			description: "Curated Paris music events by Out Of Office Collective.",
 			publisher: {
 				"@id": `${siteUrl}/#organization`,
@@ -214,7 +221,7 @@ export const metadata: Metadata = {
 	},
 	openGraph: {
 		type: "website",
-		locale: "en_US",
+		locale: "en_GB",
 		url: siteUrl,
 		title: "Fête Finder | Out Of Office Collective",
 		description:
@@ -377,30 +384,34 @@ export default function RootLayout({
 				>
 					Skip to main content
 				</a>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<SmoothAnchorScroll />
-					<ServiceWorkerRegistration />
-					<ThemeColorSync />
-					{analyticsEnabled ? <FirstPartyAnalytics /> : null}
-					<OnlineStatusProvider>
-						<AuthProvider>
-							{archiveMode ? null : <AppSettingsSync />}
-							{children}
-							{archiveMode ? null : <UserNoticeCenter />}
-							<Footer />
-							<MobileBottomNav />
-							<SupportCoffeePrompt />
-							<CommunityInvite />
-							<OfflineIndicator />
-							<PWAInstallPrompt />
-						</AuthProvider>
-					</OnlineStatusProvider>
-				</ThemeProvider>
+				<ArchiveExperience enabled={archiveMode}>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<SmoothAnchorScroll />
+						<ServiceWorkerRegistration />
+						<ThemeColorSync />
+						{analyticsEnabled ? <FirstPartyAnalytics /> : null}
+						<OnlineStatusProvider>
+							<AuthProvider>
+								{archiveMode ? null : <AppSettingsSync />}
+								{children}
+								{archiveMode ? null : <UserNoticeCenter />}
+								<ArchiveChrome>
+									<Footer />
+									<MobileBottomNav />
+									{archiveMode ? null : <SupportCoffeePrompt />}
+									{archiveMode ? null : <CommunityInvite />}
+									<OfflineIndicator />
+									{archiveMode ? null : <PWAInstallPrompt />}
+								</ArchiveChrome>
+							</AuthProvider>
+						</OnlineStatusProvider>
+					</ThemeProvider>
+				</ArchiveExperience>
 			</body>
 		</html>
 	);

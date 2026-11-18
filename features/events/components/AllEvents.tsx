@@ -1,4 +1,5 @@
 "use client";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,8 +7,8 @@ import { ClearFiltersButton } from "@/features/events/components/ClearFiltersBut
 import { EventCard } from "@/features/events/components/EventCard";
 import { FilterButton } from "@/features/events/components/FilterButton";
 import { trackNavigationClick } from "@/features/events/engagement/client-tracking";
-import { buildGenreFrequency } from "@/features/events/genre-preview";
 import type { DateRangeFilter } from "@/features/events/filtering";
+import { buildGenreFrequency } from "@/features/events/genre-preview";
 import type { SocialProofDisplayMode } from "@/features/events/social-proof";
 import type { TicketActivityDisplayMode } from "@/features/events/ticket-activity";
 import type { DayNightPeriod, Event } from "@/features/events/types";
@@ -323,19 +324,22 @@ export const AllEvents = forwardRef<HTMLDivElement, AllEventsProps>(
 								{clearFiltersControl}
 							</div>
 						</div>
-						<Link
-							href={`${basePath}/submit-event`}
-							onClick={() =>
-								trackNavigationClick({
-									group: "homepage_link",
-									label: "submit_event_all_events",
-								})
-							}
-							className="max-w-full text-xs leading-tight text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground sm:text-sm"
-						>
-							Hosting something special? Put it on the map with the collective
-							and submit <span className="whitespace-nowrap">your event →</span>
-						</Link>
+						{!isArchiveModeEnabled() && (
+							<Link
+								href={`${basePath}/submit-event`}
+								onClick={() =>
+									trackNavigationClick({
+										group: "homepage_link",
+										label: "submit_event_all_events",
+									})
+								}
+								className="max-w-full text-xs leading-tight text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground sm:text-sm"
+							>
+								Hosting something special? Put it on the map with the collective
+								and submit{" "}
+								<span className="whitespace-nowrap">your event →</span>
+							</Link>
+						)}
 						{searchSlot ? (
 							<div className="min-w-0 pt-1">{searchSlot}</div>
 						) : null}
@@ -394,15 +398,15 @@ export const AllEvents = forwardRef<HTMLDivElement, AllEventsProps>(
 								{showWrappedEmptyState
 									? "Fête week has wrapped"
 									: showSavedOnly
-									? "No saved events in this view"
-									: "No events match this view"}
+										? "No saved events in this view"
+										: "No events match this view"}
 							</h3>
 							<p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
 								{showWrappedEmptyState
 									? "The live guide now defaults to upcoming events. You can still browse this season's archive or submit the next thing the collective should know about."
 									: showSavedOnly
-									? "Save events from their detail modal, or clear filters if your saved events are hidden."
-									: "Try a broader search, remove an include/exclude chip, or clear filters to bring the full list back."}
+										? "Save events from their detail modal, or clear filters if your saved events are hidden."
+										: "Try a broader search, remove an include/exclude chip, or clear filters to bring the full list back."}
 							</p>
 							{showWrappedEmptyState && (
 								<div className="mt-4 flex flex-col items-center justify-center gap-2 sm:flex-row">

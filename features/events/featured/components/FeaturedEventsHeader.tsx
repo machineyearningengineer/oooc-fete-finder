@@ -1,5 +1,6 @@
 "use client";
 import { trackNavigationClick } from "@/features/events/engagement/client-tracking";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { Megaphone } from "lucide-react";
 import Link from "next/link";
 import { FEATURED_EVENTS_CONFIG } from "../constants";
@@ -47,6 +48,7 @@ export function FeaturedEventsHeader({
 }
 
 export function FeaturedEventsSpotlightLink() {
+	if (isArchiveModeEnabled()) return null;
 	return (
 		<Link
 			href={FEATURED_EVENTS_CONFIG.FEATURE_PAGE_ROUTE}

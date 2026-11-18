@@ -17,7 +17,12 @@ import {
 	type EventShareDetails,
 	getEventShareDetails,
 } from "@/lib/social/event-share-details";
-import { renderOGSvgToPng } from "@/lib/social/og-renderer.mjs";
+import {
+	fitOGFontSize,
+	renderOGFrame,
+	renderOGSvgToPng,
+	wrapOGText as wrapText,
+} from "@/lib/social/og-renderer.mjs";
 import type { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
@@ -489,33 +494,6 @@ const truncateText = (value: string, maxLength: number): string => {
 	return `${value.slice(0, Math.max(0, maxLength - 3)).trimEnd()}...`;
 };
 
-const wrapText = (
-	value: string,
-	maxChars: number,
-	maxLines: number,
-): string[] => {
-	const words = value.split(/\s+/).filter(Boolean);
-	const lines: string[] = [];
-	let current = "";
-
-	for (const word of words) {
-		const next = current ? `${current} ${word}` : word;
-		if (next.length > maxChars && current) {
-			lines.push(current);
-			current = word;
-			continue;
-		}
-		current = next;
-	}
-
-	if (current) lines.push(current);
-	const visible = lines.slice(0, maxLines);
-	if (lines.length > maxLines && visible.length > 0) {
-		visible[visible.length - 1] = truncateText(visible[visible.length - 1], 24);
-	}
-	return visible;
-};
-
 const getSvgTitleLayout = (title: string, isEventCard: boolean) => {
 	const candidates = isEventCard
 		? [
@@ -573,7 +551,7 @@ const renderSvgTextLines = ({
 			(line, index) =>
 				`<text x="${x}" y="${
 					startY + index * lineHeight
-				}" class="${className}" font-size="${fontSize}">${escapeXml(
+				}" class="${className}" style="font-size:${fitOGFontSize(line, fontSize, 640, className === "title" ? "Prata" : "Degular")}px">${escapeXml(
 					line,
 				)}</text>`,
 		)
@@ -609,7 +587,7 @@ const renderSvgMetaRows = (
 					return `<g transform="translate(${x} ${y})">
 	<line x1="0" y1="-10" x2="0" y2="36" stroke="${accent}" stroke-opacity="0.28"/>
 	<text x="18" y="0" class="metaLabel" font-size="13">${escapeXml(fact.label)}</text>
-	<text x="18" y="29" class="meta" font-size="22">${escapeXml(fact.value)}</text>
+	<text x="18" y="29" class="meta" style="font-size:${fitOGFontSize(fact.value, 22, width - 28)}px">${escapeXml(fact.value)}</text>
 	<line x1="${width}" y1="-10" x2="${width}" y2="36" stroke="${accent}" stroke-opacity="0"/>
 </g>`;
 				})
@@ -652,45 +630,20 @@ const renderOGSvg = (content: {
 	const factsTop = content.isEventCard
 		? Math.min(Math.max(430, subtitleBottom + 70), 454)
 		: 492;
-	const eventCountChip =
-		!content.isEventCard && content.eventCount > 0
-			? `<rect x="894" y="82" width="202" height="42" rx="21" fill="#fff8ef" fill-opacity="0.14" stroke="#fff8ef" stroke-opacity="0.2"/>
-	<text x="914" y="109" class="railSmall">${content.eventCount} events this year</text>`
-			: "";
 
 	return `<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
 	<defs>
-		<linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
-			<stop offset="0" stop-color="#fff8ef"/>
-			<stop offset="0.48" stop-color="#f3e1c8"/>
-			<stop offset="1" stop-color="#dce9e1"/>
-		</linearGradient>
-		<linearGradient id="rail" x1="802" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#201812"/>
-			<stop offset="1" stop-color="#12383a"/>
-		</linearGradient>
-		<linearGradient id="wash" x1="0" y1="0" x2="760" y2="630" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#fffaf2" stop-opacity="0.84"/>
-			<stop offset="1" stop-color="#fffaf2" stop-opacity="0.08"/>
-		</linearGradient>
 		<style>
-			.eyebrow { font: 700 19px "Degular", sans-serif; letter-spacing: 3px; fill: #624f42; }
+			.eyebrow { font: 700 19px "Degular", sans-serif; letter-spacing: 3px; fill: #52604e; }
 			.label { font: 700 22px "Degular", sans-serif; letter-spacing: 1.2px; fill: ${content.accent}; text-transform: uppercase; }
-			.title { font-family: "Prata", serif; font-weight: 400; fill: #211811; }
-			.subtitle { font: 500 34px "Degular", sans-serif; fill: #5f5044; }
+			.title { font-family: "Prata", serif; font-weight: 400; fill: #243d30; }
+			.subtitle { font: 500 34px "Degular", sans-serif; fill: #52604e; }
 			.metaLabel { font: 700 13px "Degular", sans-serif; letter-spacing: 1.8px; fill: ${content.accent}; text-transform: uppercase; }
-			.meta { font: 700 22px "Degular", sans-serif; fill: #2f241b; }
+			.meta { font: 700 22px "Degular", sans-serif; fill: #243d30; }
 			.footer { font: 700 18px "Degular", sans-serif; letter-spacing: 2.1px; fill: #6a5849; text-transform: uppercase; }
-			.railText { font: 700 16px "Degular", sans-serif; letter-spacing: 2.6px; fill: #fff8ef; }
-			.railSmall { font: 700 15px "Degular", sans-serif; fill: #f5debd; }
 		</style>
 	</defs>
-	<rect width="1200" height="630" fill="url(#bg)"/>
-	<rect width="820" height="630" fill="url(#wash)"/>
-	<path d="M800 0 L1200 0 L1200 630 L874 630 C802 470 778 295 800 0Z" fill="url(#rail)"/>
-	<path d="M814 0 C782 206 805 442 874 630" stroke="#fff8ef" stroke-opacity="0.23" stroke-width="2"/>
-	<path d="M1002 92 C938 171 926 247 967 317 C1009 390 995 470 932 543" stroke="${content.accent}" stroke-width="16" stroke-linecap="round"/>
-	<path d="M1002 92 C938 171 926 247 967 317 C1009 390 995 470 932 543" stroke="#fff8ef" stroke-opacity="0.34" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 28"/>
+	${renderOGFrame()}
 	<rect x="86" y="82" width="72" height="6" rx="3" fill="${content.accent}"/>
 	<text x="86" y="122" class="eyebrow" font-size="19">OUT OF OFFICE COLLECTIVE</text>
 	<text x="86" y="${labelY}" class="label" font-size="22">${escapeXml(content.label)}</text>
@@ -699,7 +652,11 @@ const renderOGSvg = (content: {
 		x: 86,
 		startY: titleTop,
 		className: "title",
-		fontSize: titleLayout.size,
+		fontSize: Math.min(
+			...titleLayout.lines.map((line) =>
+				fitOGFontSize(line, titleLayout.size, 640, "Prata"),
+			),
+		),
 		lineHeight: titleLayout.lineHeight,
 	})}
 	${renderSvgTextLines({
@@ -712,16 +669,7 @@ const renderOGSvg = (content: {
 	})}
 	${renderSvgMetaRows(content.chips, content.accent, factsTop)}
 	<text x="54" y="584" class="footer">${escapeXml(content.footerLocation)}</text>
-	<text x="640" y="584" class="footer" text-anchor="end">FETE FINDER</text>
-	${eventCountChip}
-	<text x="912" y="123" class="railText" font-size="16">PARIS ROUTE</text>
-	<text x="912" y="554" class="railText" font-size="16">OOOC</text>
-	<line x1="900" y1="204" x2="1004" y2="204" stroke="#fff8ef" stroke-opacity="0.24"/>
-	<text x="900" y="191" class="railSmall" font-size="15">Curated picks</text>
-	<line x1="950" y1="320" x2="1084" y2="320" stroke="#fff8ef" stroke-opacity="0.24"/>
-	<text x="950" y="307" class="railSmall" font-size="15">Live details</text>
-	<line x1="870" y1="454" x2="986" y2="454" stroke="#fff8ef" stroke-opacity="0.24"/>
-	<text x="870" y="441" class="railSmall" font-size="15">Easy sharing</text>
+	<text x="640" y="584" class="footer" text-anchor="end">FÊTE FINDER</text>
 </svg>`;
 };
 

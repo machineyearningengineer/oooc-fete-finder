@@ -1,4 +1,5 @@
 "use client";
+import { getFinderHomePath } from "@/lib/archive-mode";
 
 import { AppSettingsModal } from "@/components/AppSettingsModal";
 import { Clock } from "@/components/Clock";
@@ -78,7 +79,8 @@ const Header = ({ bannerSettings = DEFAULT_BANNER_SETTINGS }: HeaderProps) => {
 		basePath && basePath !== "/" && normalizedPathname.startsWith(basePath)
 			? normalizedPathname.slice(basePath.length) || "/"
 			: normalizedPathname;
-	const isHomePage = pathWithoutBasePath === "/";
+	const isHomePage =
+		pathWithoutBasePath === "/" || pathWithoutBasePath === "/archive";
 	const archiveMode = isArchiveModeEnabled();
 	const isPromotePage =
 		pathWithoutBasePath === "/feature-event" ||
@@ -209,7 +211,7 @@ const Header = ({ bannerSettings = DEFAULT_BANNER_SETTINGS }: HeaderProps) => {
 						}}
 					>
 						<Link
-							href={basePath || "/"}
+							href={getFinderHomePath()}
 							className="flex min-w-0 items-center gap-3 transition-colors hover:opacity-90 lg:justify-self-start"
 							aria-label="Fete Finder home"
 						>
@@ -241,7 +243,7 @@ const Header = ({ bannerSettings = DEFAULT_BANNER_SETTINGS }: HeaderProps) => {
 
 						<nav className={navClassName} aria-label="Main">
 							<Link
-								href={basePath || "/"}
+								href={getFinderHomePath()}
 								onClick={() => trackHeaderNav("home")}
 								className={`whitespace-nowrap text-sm tracking-wide underline-offset-4 transition-colors hover:text-foreground hover:underline ${
 									isHomePage ? "text-foreground" : "text-foreground/75"
@@ -354,7 +356,7 @@ const Header = ({ bannerSettings = DEFAULT_BANNER_SETTINGS }: HeaderProps) => {
 						</div>
 					</div>
 
-					{!isPromotePage && (
+					{!archiveMode && !isPromotePage && (
 						<div
 							data-header-countdown-strip
 							className="relative z-0 grid overflow-hidden border-border/75 transition-[grid-template-rows,border-width,opacity] duration-200 ease-out"
@@ -374,7 +376,8 @@ const Header = ({ bannerSettings = DEFAULT_BANNER_SETTINGS }: HeaderProps) => {
 					)}
 				</div>
 			</header>
-			{!isPromotePage &&
+			{!archiveMode &&
+				!isPromotePage &&
 				bannerSettings.enabled &&
 				bannerSettings.messages.length > 0 && (
 					<SlidingBanner

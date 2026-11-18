@@ -27,6 +27,7 @@ import type { Event } from "@/features/events/types";
 import type { MapLoadStrategy } from "@/features/maps/components/events-map-card";
 import { HomePlanRoutePrompt } from "@/features/plans/components/HomePlanRoutePrompt";
 import { useLocalAppSettings } from "@/hooks/useLocalAppSettings";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { clientLog } from "@/lib/platform/client-logger";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -178,8 +179,9 @@ function EventsClientShell({
 			return null;
 		}
 	}, [offlineGraceExpiresAt]);
-	const effectiveMapLoadStrategy: MapLoadStrategy =
-		mapLoadStrategy === "immediate"
+	const effectiveMapLoadStrategy: MapLoadStrategy = isArchiveModeEnabled()
+		? "expand"
+		: mapLoadStrategy === "immediate"
 			? "immediate"
 			: areLocalSettingsLoaded
 				? localAppSettings.mapLoadStrategy

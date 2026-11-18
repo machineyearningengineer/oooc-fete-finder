@@ -17,7 +17,7 @@ describe("og-utils", () => {
 		const { generateMainOGImage } = await loadOgUtils();
 		const url = generateMainOGImage(81);
 
-		expect(url).toBe("/og/home.png");
+		expect(url).toBe("/og/home.png?v=20260905-atlas-1");
 	});
 
 	it("versions static preset OG images when an OG image version is configured", async () => {
@@ -29,8 +29,17 @@ describe("og-utils", () => {
 		const { generatePresetOGImage } = await import("@/lib/social/og-utils");
 
 		expect(generatePresetOGImage("home")).toBe(
-			"/og/home.png?v=og-20260603",
+			"/og/home.png?v=20260905-atlas-1.og-20260603",
 		);
+	});
+
+	it("gives recap, archive and terms distinct versioned images", async () => {
+		const { generatePresetOGImage } = await loadOgUtils();
+		for (const preset of ["recap", "archive", "terms"] as const) {
+			expect(generatePresetOGImage(preset)).toBe(
+				`/og/${preset}.png?v=20260905-atlas-1`,
+			);
+		}
 	});
 
 	it("builds event OG route URL with only the event key", async () => {
@@ -39,7 +48,9 @@ describe("og-utils", () => {
 			eventKey: "evt_77b18c8e22eadd87",
 		});
 
-		expect(url).toBe("/api/og?preset=event&eventKey=evt_77b18c8e22eadd87");
+		expect(url).toBe(
+			"/api/og?preset=event&eventKey=evt_77b18c8e22eadd87&v=20260905-atlas-1",
+		);
 	});
 
 	it("builds a bounded shared plan OG route URL", async () => {
@@ -51,7 +62,7 @@ describe("og-utils", () => {
 		});
 
 		expect(url).toBe(
-			"/api/og?preset=shared-plan&stopCount=99&planDate=Sunday+21st&planVersion=2026-06-03T11%3A58%3A00.000Z",
+			"/api/og?preset=shared-plan&stopCount=99&planDate=Sunday+21st&planVersion=2026-06-03T11%3A58%3A00.000Z&v=20260905-atlas-1",
 		);
 	});
 

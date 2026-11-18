@@ -61,6 +61,7 @@ const serviceWorkerHeaders = [
 const officialFeteSourcePlanToken = "a8b66c2c34a6e82a27c705fe51222a12";
 
 const nextConfig: NextConfig = {
+	output: "standalone",
 	// Configuration for subdirectory deployment
 	// Use direct env access for build-time configuration
 	basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",

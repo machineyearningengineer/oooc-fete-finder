@@ -14,13 +14,13 @@ export default function robots(): MetadataRoute.Robots {
 				userAgent: "*",
 				allow: [
 					withBasePath("/"),
-					withBasePath("/plans/fete"),
-					withBasePath("/plans/fete-2026"),
+					withBasePath("/plans/fete$"),
+					withBasePath("/plans/fete-2026$"),
+					withBasePath("/api/og"),
 				],
 				disallow: [
 					withBasePath("/admin"),
 					withBasePath("/api"),
-					withBasePath("/event"),
 					withBasePath("/labs"),
 					withBasePath("/partner-stats"),
 					withBasePath("/partner-success"),

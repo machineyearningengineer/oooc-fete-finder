@@ -1,4 +1,5 @@
 "use client";
+import { getFinderHomePath } from "@/lib/archive-mode";
 
 import { AppSettingsModal } from "@/components/AppSettingsModal";
 import MusicPlatformModal from "@/components/MusicPlatformModal";
@@ -303,7 +304,9 @@ export function MobileBottomNav() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const haptics = useAppHaptics();
-	const normalizedPathname = normalizePathname(pathname);
+	const actualPathname = normalizePathname(pathname);
+	const normalizedPathname =
+		actualPathname === "/archive" ? "/" : actualPathname;
 	const {
 		isAuthenticated,
 		isAdminAuthenticated,
@@ -639,7 +642,7 @@ export function MobileBottomNav() {
 		{
 			key: "home",
 			label: "Discover",
-			href: basePath || "/",
+			href: getFinderHomePath(),
 			icon: Compass,
 			isActive:
 				activeSection === "home" ||
@@ -723,7 +726,7 @@ export function MobileBottomNav() {
 			PENDING_HOME_SECTION_STORAGE_KEY,
 			"all-events",
 		);
-		router.push(`${basePath || ""}/#all-events`);
+		router.push(`${getFinderHomePath()}#all-events`);
 	};
 
 	const dispatchMobileDiscoverySearch = (
@@ -1012,7 +1015,7 @@ export function MobileBottomNav() {
 								</p>
 								<div className="grid gap-0.5">
 									<Link
-										href={`${basePath || ""}/#all-events`}
+										href={`${getFinderHomePath()}#all-events`}
 										scroll={false}
 										onClick={() =>
 											handleMoreSectionClick("all_events", "all-events")
@@ -1025,7 +1028,7 @@ export function MobileBottomNav() {
 										<span>Events</span>
 									</Link>
 									<Link
-										href={`${basePath || ""}/#event-map`}
+										href={`${getFinderHomePath()}#event-map`}
 										scroll={false}
 										onClick={() =>
 											handleMoreSectionClick("event_map", "event-map")

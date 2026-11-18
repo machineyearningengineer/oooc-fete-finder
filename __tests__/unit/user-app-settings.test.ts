@@ -5,9 +5,9 @@ import {
 import { describe, expect, it } from "vitest";
 
 describe("normalizeLocalAppSettings", () => {
-	it("defaults map loading to idle preload", () => {
-		expect(normalizeLocalAppSettings({}).mapLoadStrategy).toBe("idle");
-		expect(DEFAULT_LOCAL_APP_SETTINGS.mapLoadStrategy).toBe("idle");
+	it("waits for expansion before loading the map by default", () => {
+		expect(normalizeLocalAppSettings({}).mapLoadStrategy).toBe("expand");
+		expect(DEFAULT_LOCAL_APP_SETTINGS.mapLoadStrategy).toBe("expand");
 	});
 
 	it("accepts saved map loading strategies", () => {
@@ -25,6 +25,6 @@ describe("normalizeLocalAppSettings", () => {
 				mapLoadStrategy: "immediate",
 			} as unknown as Parameters<typeof normalizeLocalAppSettings>[0])
 				.mapLoadStrategy,
-		).toBe("idle");
+		).toBe("expand");
 	});
 });

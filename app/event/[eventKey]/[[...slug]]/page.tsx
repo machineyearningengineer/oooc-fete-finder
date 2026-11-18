@@ -1,9 +1,11 @@
+import { getLiveEvents } from "@/features/data-management/runtime-service";
 import { EventSubmissionSettingsStore } from "@/features/events/submissions/settings-store";
 import {
 	formatDayWithDate,
 	formatLocationAreaLong,
 	formatPrice,
 } from "@/features/events/types";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { log } from "@/lib/platform/logger";
 import { buildSiteUrl } from "@/lib/site-url";
 import {
@@ -17,6 +19,7 @@ import {
 } from "@/lib/social/og-utils";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { HomeHeader } from "../../../HomeHeader";
 import { EventShareClient } from "./EventShareClient";
@@ -26,7 +29,16 @@ type EventSharePageProps = {
 	params: Promise<{ eventKey: string; slug?: string[] }>;
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 1800;
+
+export async function generateStaticParams() {
+	if (!isArchiveModeEnabled()) return [];
+	const { data } = await getLiveEvents({ includeEngagementProjection: false });
+	return data.flatMap((event) => [
+		{ eventKey: event.eventKey, slug: [] },
+		{ eventKey: event.eventKey, slug: [event.slug] },
+	]);
+}
 
 const decodePathSegment = (value: string): string => {
 	try {
@@ -117,7 +129,9 @@ export async function generateMetadata({
 		matchedEvent?.name ||
 		(resolvedSlug ? toDisplayTitle(resolvedSlug) : fallbackTitle);
 	const shareTitle = `${eventTitle} | Fête Finder`;
-	const shareDescription = buildShareDescription(matchedEvent);
+	const shareDescription =
+		(isArchiveModeEnabled() ? "2026 archive · This event has ended. " : "") +
+		buildShareDescription(matchedEvent);
 	const eventSharePath = buildEventSharePath(
 		matchedEvent?.eventKey || eventKey,
 		matchedEvent?.slug || resolvedSlug,
@@ -150,6 +164,7 @@ export async function generateMetadata({
 }
 
 export default async function EventSharePage({ params }: EventSharePageProps) {
+	if (!isArchiveModeEnabled()) await connection();
 	const startedAt = Date.now();
 	const { eventKey } = await params;
 	const [event, submissionSettings] = await Promise.all([

@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = generateOGMetadata({
-	title: "Plans | Fete Finder",
+	title: "Plans",
 	description:
 		"Save Fete Finder events, order your stops, and adapt archived routes for future nights.",
 	ogImageUrl: generatePresetOGImage("plans"),

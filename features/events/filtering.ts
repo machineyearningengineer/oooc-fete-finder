@@ -24,6 +24,7 @@ import {
 	isEventInDayNightPeriod,
 	isPriceInRange,
 } from "@/features/events/types";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { isStrictISODate } from "./date-utils";
 import { isEventInDiscoveryDateRange } from "./discovery-eligibility";
 import { isEventDiscoverableByDefault } from "./lifecycle";
@@ -121,6 +122,18 @@ export const getDefaultDateRangeForEvents = (
 	events: Event[],
 	referenceDate = new Date(),
 ): DateRangeFilter => {
+	if (isArchiveModeEnabled()) {
+		const latestYear = events.reduce(
+			(year, event) =>
+				isStrictISODate(event.date)
+					? Math.max(year, Number(event.date.slice(0, 4)))
+					: year,
+			0,
+		);
+		return latestYear
+			? { from: `${latestYear}-01-01`, to: `${latestYear}-12-31` }
+			: DEFAULT_EVENT_FILTER_STATE.selectedDateRange;
+	}
 	const currentYearDateRange = getCurrentParisYearDateRange(referenceDate);
 	const hasCurrentYearEvents = events.some((event) => {
 		if (!isStrictISODate(event.date)) return false;
@@ -281,6 +294,7 @@ export const filterEvents = (
 	},
 ): Event[] => {
 	const shouldUseDefaultDiscovery =
+		!isArchiveModeEnabled() &&
 		options?.defaultDateRange &&
 		areDateRangesEqual(filters.selectedDateRange, options.defaultDateRange);
 	return events.filter((event) => {

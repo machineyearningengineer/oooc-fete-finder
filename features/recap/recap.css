@@ -1,0 +1,482 @@
+/* The recap is paper in every theme; the finder keeps the visitor's own theme. */
+.recap{--paper:#f4eedf;--ink:#243d30;--coral:#b84a31;--gold:#a9782d;background:var(--paper);color:var(--ink);font-family:var(--font-degular),sans-serif;overflow:clip;isolation:isolate;position:relative}
+.recap::after{content:"";position:absolute;inset:12px;border:1px solid #b84a3155;pointer-events:none;z-index:3}
+.recap a{color:inherit;text-underline-offset:5px}
+.recap a:focus-visible,.recap button:focus-visible,.recap summary:focus-visible{outline:2px solid var(--coral);outline-offset:6px}
+.recap h1,.recap h2,.recap p{margin:0}
+.recap h1,.recap h2{font-family:var(--font-prata),Georgia,serif;font-weight:400;line-height:1.15;text-wrap:balance}
+.recap h1{font-size:clamp(64px,7.4vw,118px)}
+.recap h2{font-size:clamp(38px,4.5vw,70px)}
+.recap em{font-family:Georgia,serif;font-weight:400;color:var(--coral)}
+.recap-nav{position:sticky;top:0;z-index:20;height:80px;padding:0 clamp(26px,5vw,88px);display:flex;align-items:center;justify-content:space-between;background:#f4eedff2;border-bottom:1px solid #243d3026}
+.recap-wordmark{font-family:Georgia,serif;font-size:30px;text-decoration:none;display:flex;align-items:center;gap:20px}
+.recap-wordmark span{font:11px var(--font-degular),sans-serif;letter-spacing:.12em;max-width:120px}
+.recap-skip{font-size:15px;border-bottom:1px solid var(--coral);padding:8px 0;text-decoration:none;white-space:nowrap}.recap-skip span{margin-left:22px;color:var(--coral)}
+.recap-hero{min-height:min(900px,calc(100svh - 80px));position:relative;padding:70px clamp(30px,7vw,110px) 90px;display:flex;align-items:center}
+.recap-hero-image{position:absolute;inset:0;background:url('/recap/paris-paper.webp') center/cover no-repeat;z-index:-1}
+.recap-hero-copy{position:relative;z-index:2}.recap-eyebrow{font-size:12px;letter-spacing:.15em;line-height:1.5}
+.recap-hero h1{margin:30px 0}.recap-opening{font-size:clamp(19px,1.8vw,25px);line-height:1.45}
+.recap-scroll{display:inline-flex;align-items:center;gap:16px;margin-top:44px;font-size:14px;text-decoration:none}.recap-scroll>span{border:1px solid #243d3055;width:40px;height:40px;display:grid;place-items:center;border-radius:50%}
+.recap-hero-footer{position:absolute;bottom:24px;left:7%;right:7%;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.13em}
+.recap-route{stroke:var(--coral);overflow:visible;pointer-events:none}.recap-route .trace{stroke-width:2;stroke-dasharray:9 9}.recap-route circle{fill:var(--paper);stroke-width:1.3}.recap-route text{fill:var(--coral);stroke:none;text-anchor:middle;font:italic 14px Georgia,serif}
+.hero-trace{position:absolute;width:40%;height:85%;right:14%;top:0;transform:rotate(-12deg);z-index:1}
+.recap-ticket{position:absolute;right:7%;bottom:14%;display:flex;flex-direction:column;gap:12px;align-items:center;padding:24px 54px 24px 28px;background:#d99a75;color:#402c20;transform:rotate(-9deg);box-shadow:3px 12px 16px #3b281824;border:1px solid #694d32;outline:5px solid #d99a75;z-index:2}
+.recap-ticket::before{content:"";position:absolute;right:31px;top:0;bottom:0;border-right:1px dashed #5b3d2d}
+.recap-ticket span{font-size:10px;letter-spacing:.16em}.recap-ticket strong{font:35px Georgia,serif;letter-spacing:.15em}.recap-ticket i{position:absolute;right:10px;writing-mode:vertical-rl;font:9px var(--font-degular);letter-spacing:.15em}
+.recap-chapter{padding:46px clamp(30px,7vw,110px) 85px;position:relative;border-top:1px solid #243d3030;background-image:linear-gradient(90deg,transparent 49.9%,#8f71480c 50%,transparent 50.3%)}
+.recap-section-label{display:flex;justify-content:space-between;gap:24px;font-size:11px;letter-spacing:.13em;padding-bottom:40px;color:var(--coral)}
+.recap-split{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(35px,8vw,140px);align-items:center}
+.recap-prose{font-size:clamp(18px,1.65vw,23px);line-height:1.6;max-width:450px}.recap-prose p+p{margin-top:24px}.recap-handwritten{display:block;margin-top:30px;color:var(--coral);font:italic 23px Georgia,serif;transform:rotate(-3deg)}
+.recap-catalog{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(35px,8vw,140px);margin-top:55px;align-items:end}
+.recap-big-number{display:flex;align-items:center;gap:30px}.recap-big-number strong{font:clamp(115px,15vw,220px)/1 Georgia,serif}.recap-big-number span{font-size:17px;line-height:1.4;max-width:130px}
+.recap-catalog-ledger{margin:0}.recap-catalog-ledger>div{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #243d3040;padding:15px 0;gap:24px}.recap-catalog-ledger dt{font-size:19px}.recap-catalog-ledger dd{font:37px/1 Georgia,serif;margin:0}
+.recap-signals{background:#243d30;color:var(--paper)}.recap-signals .recap-section-label{color:#e9ad8a}.recap-signals em{color:#e9ad8a}.recap-pageviews{display:flex;align-items:center;gap:5vw;padding:45px 0;border-bottom:1px solid #f4eedf55}.recap-pageviews>strong{font:clamp(75px,14vw,205px)/1.05 Georgia,serif;white-space:nowrap}.recap-pageviews>div>span{font-size:11px;letter-spacing:.15em;color:#e9ad8a}.recap-pageviews p{font-size:22px;line-height:1.4;margin-top:20px}
+.recap-actions{display:grid;grid-template-columns:repeat(3,1fr);margin:0;padding:35px 0 20px;gap:30px}.recap-actions>div{border-right:1px solid #f4eedf44;padding-right:25px}.recap-actions>div:last-child{border:0}.recap-actions dt{font-size:16px}.recap-actions dd{font:clamp(38px,5vw,72px)/1.2 Georgia,serif;margin:18px 0 8px}.recap-actions>div>span{font-size:14px;color:#eee0c4}
+.recap-footnote{font-size:12px;line-height:1.5;margin-top:28px!important;opacity:.8}
+.recap-rhythm{background-color:#ece5d4}.recap-chart{margin-top:40px}.recap-chart svg{width:100%;overflow:visible}.chart-grid{fill:none;stroke:#243d3020;stroke-width:1}.chart-line{stroke:#345d48;stroke-width:4;fill:none}.chart-dot{fill:#f4eedf;stroke:#345d48;stroke-width:3}.chart-peak{fill:#b84a31;stroke:#f4eedf;stroke-width:4}.chart-annotation{font:italic 16px Georgia,serif;fill:#b84a31}.recap-days{display:grid;grid-template-columns:repeat(4,1fr);list-style:none;margin:0;padding:0;text-align:center}.recap-days li{display:flex;flex-direction:column;gap:10px}.recap-days li>span{font-size:12px;letter-spacing:.1em}.recap-days strong{font:clamp(24px,3vw,42px) Georgia,serif}.recap-days small{font-size:12px}.peak-day{color:#b84a31}
+.recap-sound .recap-prose{margin-top:25px}.recap-genres{list-style:none;padding:0;margin:0}.recap-genres li:not(:last-child){display:grid;grid-template-columns:30px 1fr auto;gap:16px;align-items:center;font-size:clamp(23px,2.6vw,38px);padding:19px 0;position:relative;border-bottom:1px solid #243d3025}.genre-position{font-size:11px;color:var(--coral)}.recap-genres strong{font:28px Georgia,serif}.genre-line{position:absolute;height:2px;left:0;bottom:-1px;background:var(--gold)}
+.recap-player{margin-top:30px}.recap-player button{background:transparent;color:var(--ink);border:1px solid #243d3070;padding:15px 20px;cursor:pointer;display:flex;align-items:center;gap:16px;font-size:15px}.recap-player button:hover,.recap-cta:hover{background:#243d30;color:#f4eedf}.recap-player button[aria-pressed=true]{background:#243d30;color:#f4eedf}.recap-player small{display:block;font-size:11px;margin-top:10px}.recap-waveform{display:flex;align-items:center;justify-content:center;gap:4px;height:100px;margin:55px 0 -30px;mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}.recap-waveform i{width:3px;background:var(--ink);opacity:.6}
+.recap-favourites{background-color:#efe7d7}.recap-favourite-list{list-style:none;padding:0;margin:0}.recap-favourite-list li{display:flex;align-items:baseline;gap:20px;padding:24px 0;border-bottom:1px solid #243d3040}.recap-favourite-list li>span{font-size:12px;color:var(--coral)}.recap-favourite-list li>span:last-child{margin-left:auto;font-size:24px}.recap-favourite-list a{font-size:20px;text-decoration:none}.recap-favourite-list a:hover{text-decoration:underline}.recap-favourite-list small{display:block;font-size:13px;margin-top:9px}.recap-favourites .recap-prose{margin-top:28px}
+.recap-ending{padding-top:110px;background:url('/recap/paris-paper.webp') center/cover;min-height:750px}.recap-ending-copy{position:relative;z-index:2;max-width:650px}.recap-ending h2{font-size:clamp(70px,8vw,120px);margin:30px 0}.recap-ending-copy>p:not(.recap-eyebrow){font-size:20px;line-height:1.6;max-width:520px}.recap-cta{display:inline-flex;gap:35px;align-items:center;margin-top:32px;border:1px solid var(--ink);text-decoration:none;padding:17px 22px;font-size:16px;transition:background .2s,color .2s}.ending-trace{position:absolute;right:7%;top:8%;width:35%;height:70%;opacity:.7}.recap-postscript{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-top:70px;position:relative;z-index:2}.recap-postscript>span{font:italic 30px Georgia,serif;color:var(--coral);transform:rotate(-5deg)}.recap-postscript p{font-size:16px;line-height:1.6;background:#f4eedfea;padding:16px}.recap-source{font-size:12px;margin-top:45px;max-width:600px;line-height:1.6}.recap-source summary{cursor:pointer}.recap-source p{margin-top:12px;background:var(--paper);padding:12px}
+.archive-reveal{scroll-margin-top:0;outline:none;min-height:340px}.archive-ribbon{background:#243d30;color:#f4eedf;padding:28px 6%;display:flex;align-items:center;gap:30px;font-family:var(--font-degular),sans-serif}.archive-ribbon>span{font-size:11px;letter-spacing:.15em}.archive-ribbon p{font-size:18px;margin:0}.archive-ribbon a{font-size:13px;margin-left:auto;text-decoration:underline;text-underline-offset:4px}.archive-loading{min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}.archive-loading a{text-decoration:underline}
+.recap .will-reveal{opacity:0;transform:translateY(28px);transition:opacity .85s ease,transform .85s cubic-bezier(.2,.65,.3,1)}.recap .is-in-view{opacity:1;transform:none}.recap .will-reveal .chart-line{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.8s ease .15s}.recap .is-in-view .chart-line{stroke-dashoffset:0}
+@media(min-width:1600px){.recap-chapter{padding-left:max(7vw,calc((100vw - 1300px)/2));padding-right:max(7vw,calc((100vw - 1300px)/2))}}
+@media(max-width:760px){.recap::after{inset:7px}.recap-nav{height:66px;padding:0 23px}.recap-wordmark{font-size:27px}.recap-wordmark span{display:none}.recap-skip{font-size:13px}.recap-skip span{margin-left:12px}.recap-hero{min-height:800px;padding:55px 28px 250px;align-items:flex-start}.recap-hero-image{background-position:66% center}.recap-hero h1{font-size:clamp(57px,12vw,90px);margin:27px 0}.recap-eyebrow{font-size:10px}.recap-opening{font-size:20px}.recap-scroll{margin-top:30px;font-size:12px}.hero-trace{width:66%;right:-4%;top:31%;height:55%;opacity:.65}.recap-ticket{right:30px;bottom:85px;transform:rotate(-8deg);padding:18px 45px 18px 23px}.recap-ticket strong{font-size:26px}.recap-ticket span{font-size:8px}.recap-hero-footer{left:28px;right:28px;font-size:8px;gap:20px;bottom:28px}.recap-chapter{padding:30px 28px 55px}.recap-section-label{font-size:9px;letter-spacing:.09em;padding-bottom:32px}.recap-section-label>span:last-child{display:none}.recap-split,.recap-catalog{grid-template-columns:1fr;gap:30px}.recap h2{font-size:clamp(36px,8vw,55px)}.recap-prose{font-size:19px}.recap-handwritten{font-size:20px}.recap-catalog{margin-top:35px;gap:25px}.recap-big-number{gap:25px}.recap-big-number strong{font-size:135px}.recap-big-number span{font-size:16px}.recap-catalog-ledger dt{font-size:17px}.recap-catalog-ledger dd{font-size:32px}.recap-pageviews{display:block;padding:30px 0}.recap-pageviews>strong{font-size:clamp(66px,18vw,125px)}.recap-pageviews>div{margin-top:15px;display:flex;align-items:center;justify-content:space-between;gap:20px}.recap-pageviews>div>span{font-size:9px;max-width:100px}.recap-pageviews p{font-size:17px;margin:0}.recap-actions{grid-template-columns:1fr;gap:0;padding-top:10px}.recap-actions>div{border-right:0;border-bottom:1px solid #f4eedf44;padding:22px 0;display:grid;grid-template-columns:1fr auto;column-gap:20px}.recap-actions dd{font-size:45px;grid-column:2;grid-row:1/3;margin:0}.recap-actions dt{font-size:15px}.recap-actions>div>span{font-size:12px;margin-top:7px}.recap-chart{margin-top:20px}.recap-chart svg{width:calc(100% + 28px);margin-left:-14px}.chart-annotation{font-size:18px}.recap-days li>span{font-size:9px}.recap-days strong{font-size:22px}.recap-days small{font-size:9px}.recap-genres li:not(:last-child){font-size:27px;padding:18px 0}.recap-waveform{gap:2px;height:65px;margin:35px 0 0}.recap-favourite-list a{font-size:19px}.recap-ending{padding-top:65px;min-height:0;background-position:58% center}.recap-ending h2{font-size:72px}.recap-ending-copy>p:not(.recap-eyebrow){font-size:19px}.ending-trace{width:65%;right:-10%;top:0;opacity:.25}.recap-postscript{margin-top:45px;align-items:flex-start;flex-direction:column;gap:20px}.recap-postscript p{padding:12px 0;background:transparent}.archive-ribbon{padding:25px 28px;display:block}.archive-ribbon p{font-size:17px;margin:12px 0}.archive-ribbon a{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.recap *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.recap .will-reveal{opacity:1;transform:none}.recap .will-reveal .chart-line{stroke-dashoffset:0}}
+@media(max-width:760px){
+  .recap-hero-image{background-image:linear-gradient(180deg,#f4eedf88 0%,#f4eedfeb 47%,#f4eedf22 74%,transparent 100%),url('/recap/paris-paper.webp')}
+  .recap-hero-footer{background:#f4eedfe8;padding:8px;left:20px;right:20px}
+  .recap-ending{background-image:linear-gradient(90deg,#f4eedff0,#f4eedfc9),url('/recap/paris-paper.webp')}
+  .recap-skip{min-height:44px;display:flex;align-items:center}
+}
+
+/* Printed paper: one small tiled texture, creases and imperfect ink rules. */
+.recap::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:url('/recap/paper-grain.svg') repeat;opacity:.38;mix-blend-mode:multiply}
+.recap-chapter{box-shadow:inset 0 10px 14px -14px #59452fa6,inset 0 -9px 14px -14px #59452f66;background-image:linear-gradient(90deg,transparent 49.6%,#7056380d 49.9%,#fff8e566 50%,transparent 50.5%),radial-gradient(ellipse at 0 0,#ac8a4220,transparent 58%)}
+.recap-section-label{font-family:Georgia,serif;letter-spacing:.09em}
+.recap-print-stats{position:relative;margin-top:50px;padding:28px 0 35px;border-top:3px double #a9782d80;border-bottom:3px double #a9782d80}
+.recap .recap-print-heading{font:16px Georgia,serif;letter-spacing:.1em;text-transform:uppercase;color:var(--coral);text-decoration:underline;text-underline-offset:9px;margin-bottom:40px}
+.recap-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0;padding-right:150px}
+.recap-stat-grid>div{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 18px;border-right:1px dashed #a9782d66}
+.recap-stat-grid dt{display:contents}.recap-stat-grid dt svg{order:0;width:36px;height:36px;color:var(--gold);margin-bottom:20px}.recap-stat-grid dd{order:1;margin:0 0 15px;font:clamp(40px,5vw,72px)/1 Georgia,serif}.recap-stat-grid dt span{order:2;font:13px/1.6 Georgia,serif;text-transform:uppercase;max-width:150px;letter-spacing:.04em}
+.recap-postmark{position:absolute;right:0;top:100px;transform:rotate(-12deg);border:3px double #49614999;border-radius:20px 7px 20px 7px;outline:1px dashed #49614988;outline-offset:4px;text-align:center;padding:15px 12px;font:15px/1.5 Georgia,serif;letter-spacing:.09em;opacity:.8}.recap-postmark span{display:block;font-size:25px}
+.recap-actions dt svg{display:block;width:30px;height:30px;margin-bottom:14px;color:#dfb46e}
+.genre-line{transform-origin:left;transition:transform 1.35s cubic-bezier(.16,1,.3,1) .18s}
+.recap .will-reveal:not(.is-in-view) .genre-line{transform:scaleX(0)}
+.recap .is-in-view .genre-line{transform:scaleX(1)}
+.recap-waveform i{transform-origin:center;transition:transform .85s cubic-bezier(.16,1,.3,1)}
+.recap-waveform.will-reveal:not(.is-in-view) i{transform:scaleY(.05)}
+.recap-waveform.is-in-view i{transform:scaleY(1)}
+.recap-split>*{min-width:0}
+.recap [id]{scroll-margin-top:90px}
+@media(max-width:1000px){.recap-stat-grid{padding-right:0}.recap-postmark{position:relative;top:auto;right:auto;width:125px;margin:35px auto 0}.recap-print-stats{padding-bottom:25px}}
+@media(max-width:760px){
+.recap-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:28px}
+.recap-stat-grid>div:nth-child(2n){border-right:0}
+.recap-stat-grid>div:nth-child(n+3){border-top:1px dashed #a9782d66;padding-top:28px}
+.recap-stat-grid dd{font-size:58px}.recap-stat-grid dt span{font-size:12px}.recap-stat-grid dt svg{width:32px;height:32px;margin-bottom:16px}
+.recap-print-stats{margin-top:40px}.recap-postmark{font-size:13px;padding:9px 12px}
+.recap-actions>div{grid-template-columns:minmax(0,1fr) auto;gap:6px 12px}.recap-actions dt svg{width:26px;height:26px;margin-bottom:8px}.recap-actions dd{align-self:center;font-size:clamp(36px,11vw,48px)}
+.recap-genres li:not(:last-child){grid-template-columns:22px minmax(0,1fr) auto;gap:10px;font-size:clamp(22px,6.3vw,29px);padding:22px 0}
+.recap-genres strong{font-size:31px}.genre-line{height:3px}.recap-waveform i{min-width:1px}
+.recap [id]{scroll-margin-top:78px}.recap-source summary{padding:12px 0;min-height:44px}
+.recap-hero h1{font-size:clamp(48px,12vw,90px)}.recap h2{font-size:clamp(31px,8vw,55px)}.recap-ending h2{font-size:clamp(56px,16vw,80px)}
+.recap-days{gap:8px}.recap-days strong{font-size:clamp(18px,5.4vw,26px)}.recap-days small{line-height:1.4}
+.recap-cta{gap:18px;max-width:100%;line-height:1.4}
+}
+@media(prefers-reduced-motion:reduce){.recap .will-reveal .genre-line,.recap .recap-waveform.will-reveal i{transform:none}}
+
+.recap-number{position:relative;display:inline-block;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums;white-space:nowrap}
+.recap-number-reel{position:absolute;inset:0;display:flex;justify-content:flex-end;align-items:center;visibility:hidden;pointer-events:none}
+.recap-number.is-rolling>.recap-number-text{opacity:0}
+.recap-number.is-rolling>.recap-number-reel{visibility:visible}
+@media(prefers-reduced-motion:reduce){.recap-number.is-rolling>.recap-number-text{opacity:1}.recap-number.is-rolling>.recap-number-reel{visibility:hidden}}
+
+/* Keep numeral typography independent of surrounding labels and give reels breathing room. */
+.recap .recap-number,.recap .recap-number-text,.recap .recap-number-reel{font:inherit;line-height:1.3;color:inherit}
+.recap-number{padding-block:.08em}.recap-number-reel{inset:.08em 0;--rn-edge-fade:0em}
+.chart-scrubber{position:relative}.recap .chart-scrubber svg{display:block;width:100%;margin:0}
+.chart-range{position:absolute;left:8%;top:0;width:84%;height:100%;margin:0;opacity:0;cursor:ew-resize;touch-action:pan-y}
+.chart-scrubber:focus-within{outline:2px solid var(--coral);outline-offset:6px}
+.chart-cursor-line{stroke:var(--coral);stroke-width:2;stroke-dasharray:5 6}.chart-cursor{fill:var(--coral);stroke:var(--paper);stroke-width:5}
+.recap .chart-instruction{font-size:13px;color:var(--ink);margin-bottom:14px}
+.recap .chart-readout{font:italic 18px/1.5 Georgia,serif;text-align:center;margin:12px 0 20px;min-height:2.8em}
+.recap-days button{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;background:transparent;border:0;border-top:2px solid transparent;padding:12px 2px;color:inherit;cursor:pointer;font:inherit}
+.recap-days button[aria-pressed=true]{border-color:var(--coral);color:var(--coral);background:#a9782d0c}
+.recap-days button>span{font-size:12px;letter-spacing:.1em}
+@media(max-width:760px){.recap-days button>span{font-size:9px}.recap .chart-readout{font-size:16px}.recap-actions dd{min-width:0}}
+
+/* A folded field-map spread: the data and controls remain real HTML/SVG. */
+.scrapbook-chart{isolation:isolate;position:relative;padding:32px 38px 22px;background:#f3ecda;box-shadow:0 10px 22px -15px #44352199,1px 1px 3px #55442e44;border:1px solid #9b805533;transform:rotate(-.4deg)}
+.scrapbook-chart::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(90deg,transparent 32.7%,#80644413 33%,#fffbea88 33.2%,transparent 33.7%,transparent 66.1%,#8064441c 66.5%,#fffbea66 66.7%,transparent 67%),url('/recap/paper-grain.svg');box-shadow:inset 0 0 28px #8c704622}
+.scrapbook-masthead{display:flex;align-items:center;gap:20px;border-bottom:1px solid #62704744;padding-bottom:15px;font:11px/1.4 monospace;letter-spacing:.12em}.scrapbook-masthead>span:nth-child(2){margin-left:auto}.scrapbook-masthead svg{width:36px;height:36px}
+.scrapbook-topline{display:flex;justify-content:space-between;align-items:center;gap:25px;padding:28px 0 16px}
+.recap .scrapbook-note{font:20px/1.4 Georgia,serif}.scrapbook-note em{display:inline-block;margin-top:8px;transform:rotate(-3deg)}
+.scrapbook-legend{border:1px solid #345d4866;padding:14px 18px;display:grid;gap:12px;font:11px monospace;max-width:240px;background:#f4eedf99}.scrapbook-legend>span{display:flex;align-items:center;gap:12px}.scrapbook-legend>span:first-child{font-size:10px;letter-spacing:.1em;margin-bottom:3px}.scrapbook-legend i{width:25px;border-top:3px solid #345d48}.scrapbook-legend b{width:12px;height:12px;border:2px solid #345d48;border-radius:50%;margin:0 6px}
+.scrapbook-map{position:absolute;left:0;right:0;top:20%;bottom:0;z-index:-1;background:url('/recap/paris-scrapbook-map.webp') center bottom/cover no-repeat;opacity:.65;clip-path:polygon(0 8%,8% 10%,16% 6%,24% 9%,35% 4%,45% 6%,58% 2%,67% 5%,78% 0,88% 4%,100% 1%,100% 100%,0 100%);mask-image:linear-gradient(transparent,#000 30%)}
+.scrapbook-chart .chart-grid{stroke:#57684317}.scrapbook-chart .chart-line{stroke-width:4.5}.scrapbook-chart .chart-dot{stroke-width:3;fill:#f3ecda}.scrapbook-chart .chart-cursor{stroke-width:5;r:15}.scrapbook-chart .chart-annotation{font-size:20px}
+.scrapbook-chart .chart-area{opacity:.85;clip-path:inset(0)}.scrapbook-chart .chart-scrubber.will-reveal:not(.is-in-view) .chart-area{clip-path:inset(0 100% 0 0)}.scrapbook-chart .chart-scrubber.is-in-view .chart-area{transition:clip-path 1.8s ease .15s}
+.recap .scrapbook-chart .chart-readout{position:relative;display:flex;align-items:center;justify-content:center;gap:20px;width:fit-content;max-width:100%;margin:-12px auto 20px;padding:16px 24px;background:#f9f1dc;border-top:1px dashed #9f7f4b99;border-bottom:1px dashed #9f7f4b99;box-shadow:2px 4px 9px #624b2820;transform:rotate(1deg);min-height:0}.chart-readout>span{font:italic 18px Georgia,serif}.chart-readout>strong{font:42px/1.3 Georgia,serif;color:var(--coral)}.chart-readout>small{font:9px/1.5 monospace;max-width:70px;letter-spacing:.08em}
+.recap .scrapbook-caption{text-align:center;font:italic 22px/1.4 Georgia,serif;margin:20px 0 28px;transform:rotate(-2deg);text-decoration:underline;text-decoration-color:#a9782d88;text-underline-offset:8px}
+.scrapbook-chart .recap-days{position:relative;background:#f4eedfbb;border-top:1px solid #7b795744}.scrapbook-chart .recap-days button{padding:16px 4px}.recap .scrapbook-provenance{font:9px/1.6 monospace;letter-spacing:.05em;margin-top:20px;text-align:center;opacity:.75}
+@media(max-width:760px){
+.scrapbook-chart{margin-left:-12px;margin-right:-12px;padding:20px 14px 18px}
+.scrapbook-masthead{font-size:8px;gap:10px}.scrapbook-masthead svg{width:26px;height:26px;flex-shrink:0}
+.scrapbook-topline{padding:23px 0 18px;gap:12px;align-items:start}.recap .scrapbook-note{font-size:17px}.scrapbook-legend{font-size:9px;padding:10px;gap:10px;max-width:145px}.scrapbook-legend>span:first-child{font-size:8px}.scrapbook-legend>span{gap:7px}.scrapbook-legend i{width:18px;flex-shrink:0}
+.recap .scrapbook-chart .chart-instruction{font-size:11px;line-height:1.5;margin-bottom:24px}
+.scrapbook-chart .chart-scrubber{margin:0 -6px}.scrapbook-chart .chart-annotation{font-size:22px}
+.recap .scrapbook-chart .chart-readout{display:grid;grid-template-columns:auto auto;gap:2px 14px;padding:12px 16px;margin:0 auto 22px}.chart-readout>span{font-size:15px}.chart-readout>strong{font-size:35px;grid-column:2;grid-row:1/3}.chart-readout>small{font-size:8px;max-width:none}
+.recap .scrapbook-caption{font-size:18px;margin:20px 12px 24px}.scrapbook-chart .recap-days{gap:2px}.scrapbook-chart .recap-days button>span{font-size:9px;letter-spacing:0}.scrapbook-chart .recap-days strong{font-size:clamp(18px,5vw,24px)}
+}
+@media(prefers-reduced-motion:reduce){.scrapbook-chart .will-reveal .chart-area{clip-path:inset(0)}}
+.scrapbook-chart{overflow:hidden}.scrapbook-map{top:-35%;opacity:.72}
+.scrapbook-chart::after{content:"";position:absolute;top:-7px;left:43%;width:90px;height:25px;transform:rotate(-4deg);background:#cbbb8b66;border-left:1px dashed #9b865c55;border-right:1px dashed #9b865c55;pointer-events:none}
+
+/* Closing postcard: illustrated paper surrounds real, responsive type and links. */
+.recap .recap-ending{padding:0;background:var(--paper);min-height:0}
+.recap-postcard{position:relative;isolation:isolate;min-height:800px;aspect-ratio:3/2;background:url('/recap/paris-closing-postcard.webp') center/cover no-repeat;padding:5% 9% 23%;display:flex;align-items:center;justify-content:center}
+.postcard-masthead{position:absolute;top:7%;left:9%;display:flex;flex-direction:column;gap:15px;font:14px/1.5 Georgia,serif;letter-spacing:.2em}.postcard-masthead>span:first-child{border-bottom:1px solid #68715066;padding-bottom:12px}.postcard-masthead>span:last-child{font-size:12px;display:flex;align-items:center;gap:16px}.postcard-masthead i{font-style:normal;color:var(--gold);font-size:24px}
+.recap .recap-ending-copy{max-width:none;width:100%;text-align:center;margin-top:14%;position:relative;z-index:2}
+.postcard-star{display:block;color:var(--gold);font:80px/1 Georgia,serif}
+.recap .recap-ending h2{font-family:Georgia,serif;font-size:clamp(58px,8.3vw,145px);line-height:1.15;margin:24px -4% 42px;letter-spacing:-.055em;text-wrap:balance;color:var(--ink)}
+.recap-ending .recap-cta{background:#f6efdf66;border-color:var(--coral);padding:22px 40px;font:20px/1.4 Georgia,serif;text-transform:uppercase;letter-spacing:.17em;gap:25px;margin:0}.recap-ending .recap-cta:hover{background:var(--ink);color:var(--paper)}.recap-ending .recap-cta>span{color:var(--coral);font-size:28px}
+.postcard-route{position:absolute;left:3%;width:33%;top:54%;height:20%;pointer-events:none;z-index:1}.postcard-route path{stroke:var(--coral);stroke-width:1.3;stroke-dasharray:.009 .009}.postcard-route circle{fill:var(--gold)}
+.recap-ending .recap-postscript{padding:30px 7%;margin:0;border-top:1px solid #a9782d44;background:var(--paper)}.recap-ending .recap-postscript p{background:none}.recap-ending .recap-source{margin:0;max-width:none;padding:0 7% 30px}.recap-ending .recap-source p{max-width:700px}
+@media(max-width:760px){
+.recap-postcard{aspect-ratio:auto;min-height:760px;padding:110px 30px 260px;background-position:center bottom;background-size:auto 100%}
+.postcard-masthead{top:34px;left:30px;right:30px;font-size:11px;letter-spacing:.13em;max-width:240px}.postcard-masthead>span:last-child{font-size:10px;gap:10px}.postcard-masthead i{font-size:20px}
+.recap .recap-ending-copy{margin-top:25px}.postcard-star{font-size:65px}
+.recap .recap-ending h2{font-size:clamp(53px,13vw,85px);line-height:1.13;letter-spacing:-.045em;margin:24px 0 35px}
+.recap-ending .recap-cta{padding:18px 20px;font-size:14px;letter-spacing:.1em;gap:16px;white-space:nowrap}.recap-ending .recap-cta>span{font-size:22px}
+.postcard-route{left:-6%;top:61%;width:58%;height:15%;opacity:.8}
+.recap-ending .recap-postscript{padding:28px;gap:12px}.recap-ending .recap-source{padding:0 28px 28px}
+}
+
+.recap .recap-ending h2{font-family:var(--font-prata),Georgia,serif;font-weight:400}.postcard-star{width:75px;height:75px;margin:0 auto}@media(max-width:760px){.postcard-star{width:58px;height:58px}}
+
+/* The reel's default edge mask faded the bottoms of settled numerals. */
+.recap .recap-number-reel{--rn-mask:none}
+.recap .recap-number-reel .rn-slot{-webkit-mask-image:none;mask-image:none}
+.recap-source>button{font:inherit;color:var(--ink);background:none;border:0;padding:12px 0;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:5px}
+.recap-source-popover{position:fixed;inset:0;margin:auto;width:min(560px,calc(100vw - 40px));max-height:80svh;overflow:auto;padding:30px;background:#f4eedf;color:#243d30;border:1px solid #a9782d88;box-shadow:0 20px 80px #243d3044;font:16px/1.6 Georgia,serif}
+.recap-source-popover::backdrop{background:#243d3022}
+.recap-source-popover h3{font:25px/1.3 Georgia,serif;margin:0 30px 20px 0}
+.recap .recap-source-popover p{padding:0;background:transparent;font-size:16px}
+.recap-source-close{position:absolute;top:8px;right:8px;width:44px;height:44px;background:none;color:inherit;border:0;font-size:28px;cursor:pointer}
+@media(max-width:400px){.recap-source-popover{padding:24px}.recap-source-popover h3{font-size:23px}}
+/* Explicit width prevents aspect-ratio + minimum height from widening the flex item. */
+.recap-postcard{width:100%;min-width:0;box-sizing:border-box}
+.recap .recap-ending-copy{min-width:0;max-width:100%;flex:1}
+.recap .recap-ending h2{max-width:100%;margin-left:0;margin-right:0;overflow-wrap:normal}
+@media(min-width:761px) and (max-width:1100px){
+.recap-postcard{aspect-ratio:auto;min-height:740px;padding:130px 7% 230px}
+.recap .recap-ending-copy{margin-top:35px}
+.recap .recap-ending h2{font-size:clamp(58px,8vw,88px)}
+}
+/* On phones the response reads as one column, not two cramped ledger halves. */
+@media(max-width:600px){
+.recap-signals{background-image:radial-gradient(ellipse at 0 0,#ac8a4214,transparent 58%)}
+.recap-signals .recap-pageviews>div{display:block;margin-top:20px}
+.recap-signals .recap-pageviews>div>span{display:block;max-width:none;font-size:10px;line-height:1.5}
+.recap-signals .recap-pageviews p{margin-top:14px;font-size:18px}
+.recap-signals .recap-actions>div{display:flex;flex-direction:column;align-items:flex-start;padding:26px 0;gap:0;border-right:0}
+.recap-signals .recap-actions dt{font-size:17px;line-height:1.5}
+.recap-signals .recap-actions dt svg{width:28px;height:28px;margin-bottom:12px}
+.recap-signals .recap-actions dd{align-self:auto;font-size:clamp(44px,13vw,64px);margin:12px 0 0}
+.recap-signals .recap-actions>div>span{font-size:13px;line-height:1.5;margin-top:4px}
+.recap-signals .recap-footnote{max-width:36ch}
+}
+
+/* Green field report: a city engraving, perforated print rules and ink-stamped icons. */
+.recap-signals{isolation:isolate;background-image:radial-gradient(ellipse at 80% 30%,#44604455,transparent 65%)}
+.recap-signals::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('/recap/paris-scrapbook-map.webp') center bottom/cover no-repeat;mix-blend-mode:screen;opacity:.075;mask-image:linear-gradient(transparent,#000 35%,#000 75%,transparent)}
+.response-dispatch{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:42px;padding:16px 0;border-top:1px solid #dfb46e66;font:10px/1.5 monospace;letter-spacing:.12em;color:#e9ad8a}
+.response-dispatch>span:nth-child(2){font:italic 20px Georgia,serif;color:#f4eedf;letter-spacing:0;transform:rotate(-2deg)}
+.recap-signals .recap-pageviews{position:relative;margin:0 -12px;padding:32px 12px 38px;border-top:1px dashed #dfb46e77;border-bottom:1px dashed #dfb46e77;background:linear-gradient(100deg,#122c201c,#18342688);gap:4vw}
+.recap-signals .recap-pageviews::before,.recap-signals .recap-pageviews::after{content:"";position:absolute;top:-6px;width:12px;height:12px;border-radius:50%;background:#243d30;border:1px solid #dfb46e66}.recap-signals .recap-pageviews::before{left:-6px}.recap-signals .recap-pageviews::after{right:-6px}
+.recap-signals .recap-pageviews p em{font-size:1.12em;line-height:1.5;text-decoration:underline;text-decoration-color:#dfb46e66;text-underline-offset:7px}
+.recap-signals .recap-actions{gap:34px;padding-top:42px}
+.recap-signals .recap-actions>div{position:relative;border-right:1px dashed #dfb46e55}
+.recap-signals .recap-actions>div:last-child{border-right:0}
+.recap-signals .recap-actions dt svg{width:48px;height:48px;padding:8px;border:1px solid #dfb46e66;outline:1px dashed #dfb46e44;outline-offset:4px;border-radius:3px;margin:4px 0 24px;transform:rotate(-7deg)}
+.recap-signals .recap-actions>div:nth-child(2) dt svg{transform:rotate(6deg)}
+.recap-signals .recap-actions dt{font:italic 20px/1.4 Georgia,serif}
+.recap-signals .recap-actions dd{margin-top:20px}
+.recap-signals .recap-actions>div>span{font-size:12px;letter-spacing:.045em}
+.recap-signals .recap-footnote{border-top:1px solid #dfb46e33;padding-top:18px}
+@media(max-width:600px){
+.response-dispatch{margin-top:30px;gap:12px;flex-wrap:wrap;font-size:8px}.response-dispatch>span:nth-child(2){order:3;flex-basis:100%;font-size:19px;padding:5px 0}.response-dispatch>span:last-child{margin-left:auto}
+.recap-signals .recap-pageviews{margin:0;padding:24px 0 30px;background:transparent}
+.recap-signals .recap-pageviews>strong{font-size:clamp(60px,18vw,98px)}
+.recap-signals .recap-actions{padding-top:10px;gap:0}
+.recap-signals .recap-actions>div{padding:30px 0;border-right:0;border-bottom:1px dashed #dfb46e55}
+.recap-signals .recap-actions>div:last-child{border-bottom:0}
+.recap-signals .recap-actions dt{font-size:20px}.recap-signals .recap-actions dt svg{width:40px;height:40px;padding:7px;margin:4px 0 20px}
+.recap-signals .recap-actions dd{margin:10px 0 0;font-size:clamp(44px,13vw,64px)}
+.recap-signals .recap-actions>div>span{margin-top:4px;line-height:1.5}
+}
+
+@media(max-width:600px){
+.recap-signals .recap-actions>div{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:20px;row-gap:3px;padding:22px 0;align-items:start}
+.recap-signals .recap-actions dt{display:contents}
+.recap-signals .recap-actions dt svg{grid-column:1;grid-row:1/4;width:34px;height:34px;padding:6px;margin:8px 0 0 4px}
+.recap-signals .response-action-title{grid-column:2;grid-row:1;font:italic 17px/1.4 Georgia,serif}
+.recap-signals .recap-actions dd{grid-column:2;grid-row:2;font-size:clamp(38px,10.5vw,52px);margin:0}
+.recap-signals .recap-actions>div>span{grid-column:2;grid-row:3;font-size:12px;margin:0;letter-spacing:0}
+.recap-signals .recap-footnote{margin-top:16px!important}
+}
+
+/* An opening spread: editorial cover on the left, a collected city map on the right. */
+.recap-hero{display:grid;grid-template-columns:1.05fr 1fr;gap:4%;padding-top:48px;padding-bottom:80px;min-height:760px;isolation:isolate}
+.recap-hero-image{background:linear-gradient(90deg,#f4eedfcc,#f4eedf66),url('/recap/paper-grain.svg');z-index:-1}
+.recap-hero-copy{min-width:0}.recap-hero .recap-eyebrow{font:11px/1.6 Georgia,serif;letter-spacing:.18em;border-top:1px solid #a9782d66;padding-top:16px;width:fit-content}
+.recap-hero h1{font-size:clamp(60px,6.6vw,106px);letter-spacing:-.045em;margin:26px 0}.recap-hero h1 em{display:inline-block;position:relative}
+.recap-hero h1 em::after{content:"";position:absolute;left:3%;right:0;bottom:0;height:5px;border-bottom:1px solid #b84a3188;border-radius:50%;transform:rotate(-3deg)}
+.recap-hero .recap-opening{font:20px/1.6 Georgia,serif}.recap-hero .recap-scroll{font-size:14px;letter-spacing:.03em;margin-top:28px}.recap-scroll>span{transition:transform .25s,background .25s}.recap-scroll:hover>span{transform:translateY(4px);background:#a9782d18}
+.hero-atlas{position:relative;min-width:0;height:590px;background:linear-gradient(#f4eedf22,#f4eedf00),url('/recap/paris-scrapbook-map.webp') 60% bottom/auto 110%;box-shadow:-8px 8px 22px #5c48241a;border:1px solid #a9782d33;transform:rotate(2deg);isolation:isolate}
+.hero-atlas::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.5%,#81623d22 50%,#fff6 50.5%,transparent 51%),url('/recap/paper-grain.svg');pointer-events:none}
+.hero-atlas::after{content:"";position:absolute;top:-13px;left:39%;width:90px;height:28px;transform:rotate(-6deg);background:#d5bc8770;border-left:2px dotted #f4eedf99;border-right:2px dotted #f4eedf99}
+.hero-atlas-heading{position:absolute;top:35px;left:26px;display:flex;flex-direction:column;gap:8px}.hero-atlas-heading strong{font:52px/1.1 var(--font-prata),Georgia,serif}.hero-atlas-heading span{font:9px/1.5 monospace;letter-spacing:.12em}
+.hero-postmark{position:absolute;right:20px;top:26px;width:96px;height:96px;border:1px solid #b84a3188;outline:1px dashed #b84a3188;outline-offset:-5px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:var(--coral);transform:rotate(14deg)}.hero-postmark span{font:8px monospace;letter-spacing:.06em}.hero-postmark strong{font:23px Georgia,serif}
+.hero-atlas .hero-trace{width:85%;height:75%;right:0;top:15%;transform:rotate(-8deg);opacity:.85;animation:none}
+.hero-map-note{position:absolute;bottom:165px;left:22px;transform:rotate(-7deg);font:italic 21px Georgia,serif;color:var(--coral)}
+.hero-atlas .recap-ticket{right:12px;bottom:25px;max-width:90%;box-sizing:border-box;transform:rotate(-8deg);padding:20px 44px 20px 20px;gap:9px;text-decoration:none;background:#d9987b url('/recap/paper-grain.svg');outline:3px solid #d9987b;transition:transform .3s,box-shadow .3s}.hero-atlas .recap-ticket strong{font:clamp(23px,2.5vw,36px)/1.2 Georgia,serif;letter-spacing:.04em}.hero-atlas .recap-ticket span{font-size:8px}.hero-atlas .recap-ticket:hover{transform:rotate(-4deg) translateY(-4px);box-shadow:4px 16px 24px #3b281833}
+@media(max-width:1000px) and (min-width:761px){.recap-hero{padding-inline:5%;gap:3%;min-height:680px}.recap-hero h1{font-size:clamp(54px,6.6vw,70px)}.hero-atlas{height:520px}.hero-postmark{width:75px;height:75px;right:12px}.hero-atlas-heading{left:16px}.hero-atlas-heading strong{font-size:42px}.hero-map-note{font-size:17px}.recap-hero .recap-opening{font-size:17px}}
+@media(max-width:760px){.recap-hero{grid-template-columns:1fr;gap:36px;padding:32px 28px 75px;min-height:0}.recap-hero h1{font-size:clamp(52px,12vw,82px);margin:20px 0}.recap-hero .recap-opening{font-size:18px}.recap-hero .recap-scroll{margin-top:22px}.hero-atlas{height:350px;transform:rotate(1deg)}.hero-atlas-heading{top:22px;left:20px;gap:5px}.hero-atlas-heading strong{font-size:38px}.hero-atlas-heading span{font-size:8px}.hero-postmark{width:75px;height:75px;top:18px;right:14px}.hero-atlas .hero-trace{top:10%;height:86%;width:70%;right:0}.hero-map-note{font-size:17px;left:18px;bottom:130px;max-width:110px}.hero-atlas .recap-ticket{padding:16px 38px 16px 16px;bottom:20px;right:10px}.hero-atlas .recap-ticket strong{font-size:24px}.hero-atlas .recap-ticket span{font-size:7px}.recap-hero-footer{background:none;padding:0;left:28px;right:28px;bottom:22px;font-size:7px}}
+@media(prefers-reduced-motion:no-preference){.hero-atlas{animation:atlas-arrive 1.1s both}.recap-hero-copy{animation:cover-arrive .8s both}@keyframes atlas-arrive{from{opacity:0;translate:0 18px}to{opacity:1;translate:0 0}}@keyframes cover-arrive{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}}
+
+/* Let the postcard illustration dissolve into its signed postscript. */
+.recap-ending .recap-postscript{margin-top:-150px;padding:100px 7% 18px;border:0;background:linear-gradient(180deg,#f4eedf00 0,#f4eedfe8 75px,var(--paper) 125px);align-items:flex-end;gap:28px}
+.recap-ending .recap-postscript>span{font-size:clamp(28px,3vw,40px);white-space:nowrap}
+.recap-ending .recap-postscript p{padding:0;font-size:15px;line-height:1.8}
+.recap-ending .recap-postscript a{text-decoration:none;border-bottom:1px solid #a9782d77;padding-bottom:4px}
+.recap-ending .recap-source{position:relative;z-index:2;background:var(--paper);padding-bottom:20px}
+@media(max-width:760px){.recap-ending .recap-postscript{margin-top:-130px;padding:92px 28px 18px;align-items:flex-start;gap:20px}.recap-ending .recap-postscript>span{font-size:29px}.recap-ending .recap-postscript p{font-size:14px}}
+
+/* The opening is one full-bleed map, with the keepsake details laid onto it. */
+.recap-hero{display:flex;gap:0;min-height:760px}
+.recap-hero-image{background:linear-gradient(90deg,#f4eedff5 0%,#f4eedfe8 30%,#f4eedf99 49%,#f4eedf11 75%),url('/recap/paris-scrapbook-map.webp') center 65%/cover no-repeat}
+.recap-hero-copy{width:52%;position:relative;z-index:2}
+.hero-atlas{position:absolute;inset:0 0 0 48%;height:auto;background:none;box-shadow:none;border:0;transform:none;animation:none;pointer-events:none}
+.hero-atlas::before{display:none}.hero-atlas::after{top:24px;left:38%;width:105px;height:32px;transform:rotate(-9deg);background:#ccb27d66}
+.hero-atlas-heading{top:85px;left:12%}.hero-postmark{top:60px;right:9%}
+.hero-atlas .hero-trace{top:15%;right:8%;width:85%;height:70%}
+.hero-map-note{bottom:225px;left:12%}
+.hero-atlas .recap-ticket{right:13%;bottom:90px;pointer-events:auto}
+@media(min-width:761px) and (max-width:1000px){.recap-hero{min-height:700px}.recap-hero-copy{width:52%}.hero-atlas{height:auto}.hero-atlas-heading{left:7%;top:95px}.hero-postmark{right:7%;top:45px}.hero-map-note{left:5%;bottom:230px}.hero-atlas .recap-ticket{right:10%;bottom:100px}}
+@media(max-width:760px){.recap-hero{display:block;min-height:870px;padding-bottom:370px}.recap-hero-copy{width:100%}.recap-hero-image{background:linear-gradient(180deg,#f4eedff5 0%,#f4eedfe8 32%,#f4eedf66 54%,#f4eedf00 76%),url('/recap/paris-scrapbook-map.webp') 58% bottom/auto 100% no-repeat}.hero-atlas{inset:auto 0 38px;height:330px;transform:none}.hero-atlas::after{top:0;left:auto;right:28px;width:80px;height:25px}.hero-atlas-heading{top:32px;left:28px}.hero-postmark{top:40px;right:30px}.hero-atlas .hero-trace{top:0;right:8%;width:62%;height:95%}.hero-map-note{bottom:125px;left:28px}.hero-atlas .recap-ticket{right:30px;bottom:30px}.recap-hero-footer{background:#f4eedfcc;padding:7px;left:21px;right:21px;bottom:16px}}
+.hero-atlas::after{display:none}.hero-atlas .recap-ticket::after{content:"";position:absolute;top:-13px;left:28%;width:90px;height:28px;transform:rotate(5deg);background:#d5bc8799;border-inline:2px dotted #f4eedf99;pointer-events:none}
+
+/* Story motion: native scrolling, one-time entrances, and an accessible chapter index. */
+.chapter-progress{position:absolute;left:0;right:0;bottom:-10px;display:flex;height:20px;gap:3px;align-items:center;padding:0 12px}
+.chapter-progress a{position:relative;flex:1;height:20px;display:flex;align-items:center;text-decoration:none}
+.chapter-progress a::before{content:"";height:2px;width:100%;background:#a9782d33;transition:background .3s}
+.chapter-progress a[data-complete="true"]::before{background:var(--coral)}
+.chapter-progress a[aria-current]::after{content:"";position:absolute;right:0;width:6px;height:6px;border-radius:50%;background:var(--coral)}
+.chapter-progress a span{position:absolute;top:20px;left:0;padding:6px 9px;background:var(--paper);font-size:11px;white-space:nowrap;opacity:0;pointer-events:none}
+.chapter-progress a:last-child span{left:auto;right:0}.chapter-progress a:is(:hover,:focus-visible) span{opacity:1}
+.recap-signals .recap-actions{position:relative}
+@media(min-width:761px){.recap-signals .recap-actions::before{content:"";position:absolute;left:24px;right:calc(33.33% - 24px);top:70px;border-top:1px dashed #dfb46e66;pointer-events:none}.recap-signals .recap-actions dt svg{position:relative;background:#243d30}}
+@media(prefers-reduced-motion:no-preference){
+ .recap-actions.will-reveal{opacity:1;transform:none}
+ .recap-actions.will-reveal>div{opacity:0;translate:0 16px;transition:opacity .65s,translate .65s;transition-delay:calc(var(--action-order,0)*140ms)}
+ .recap-actions>div:nth-child(2){--action-order:1}.recap-actions>div:nth-child(3){--action-order:2}
+ .recap-actions.is-in-view>div{opacity:1;translate:0 0}
+ .recap-postcard.will-reveal{transform:none;opacity:1;clip-path:inset(0 0 12%);transition:clip-path 1.2s cubic-bezier(.2,.65,.3,1)}
+ .recap-postcard.is-in-view{clip-path:inset(0)}
+ @supports(animation-timeline:view()){
+  .recap-hero{view-timeline-name:--cover;view-timeline-axis:block}
+  .hero-atlas .recap-ticket{animation:ticket-settle linear both;animation-timeline:--cover;animation-range:exit 0% exit 45%}
+  @keyframes ticket-settle{from{translate:0 -12px;rotate:3deg}to{translate:0 0;rotate:0deg}}
+ }
+}
+
+.recap-postcard{background-image:none}.postcard-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-1;pointer-events:none}
+.recap [id]{scroll-margin-top:112px}
+@media(max-width:760px){.recap [id]{scroll-margin-top:98px}}
+
+/* Legible printed waypoints and a stamp whose lettering stays inside its rings. */
+.hero-atlas .hero-trace{opacity:1;clip-path:none}
+.recap-route .trace{opacity:1}
+.recap-route .route-energy{stroke:var(--coral);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
+.recap-route .route-stop>circle{fill:#f4eedf;stroke:var(--coral);stroke-width:1.5}
+.recap-route .route-stop .route-stop-ring{fill:none;stroke:var(--gold);stroke-width:.7;opacity:.6}
+.recap-route .route-stop text{font:600 18px Georgia,serif;fill:var(--ink)}
+.hero-atlas .hero-postmark{display:block;width:120px;height:120px;border:0;outline:0;overflow:visible;transform:rotate(9deg);fill:none;stroke:currentColor;stroke-width:1.2}
+.hero-postmark .postmark-inner{stroke-dasharray:3 3;opacity:.65}
+.hero-postmark text{fill:currentColor;stroke:none;text-anchor:middle}
+.hero-postmark .postmark-label{font:9px monospace;letter-spacing:.7px}
+.hero-postmark .postmark-brand{font:32px Georgia,serif;letter-spacing:0}
+@media(max-width:1000px){.hero-atlas .hero-postmark{width:96px;height:96px}}
+@media(prefers-reduced-motion:reduce){.recap-route .route-energy{stroke-dashoffset:0}}
+
+/* A complete route at rest, with a single ink accent travelling over it on arrival. */
+.recap-route .route-energy{stroke:#a9782d;stroke-width:4;stroke-dasharray:.14 1;stroke-dashoffset:1;opacity:0}
+@media(prefers-reduced-motion:no-preference){.hero-atlas .hero-trace.is-in-view .route-energy{animation:route-ink-pass 3.8s ease-in-out .6s both}@keyframes route-ink-pass{0%{stroke-dashoffset:.14;opacity:0}10%{opacity:1}85%{opacity:1}100%{stroke-dashoffset:-1;opacity:0}}}
+@media(prefers-reduced-motion:reduce){.recap-route .route-energy{opacity:0}}
+
+/* The next sheet gently rises over the cover, without capturing the scroll. */
+.recap-guide{z-index:2;background-color:var(--paper);box-shadow:0 -12px 24px #5c482414}
+@media(prefers-reduced-motion:no-preference){@supports(animation-timeline:view()){
+ .recap-guide{animation:chapter-sheet linear both;animation-timeline:view();animation-range:entry 0% entry 75%}
+ @keyframes chapter-sheet{from{translate:0 -24px}to{translate:0 0}}
+ .recap-hero-image{animation:cover-recede linear both;animation-timeline:--cover;animation-range:exit 0% exit 85%;transform-origin:center bottom}
+ @keyframes cover-recede{to{transform:scale(.97);opacity:.75}}
+}}
+.archive-loading{box-sizing:border-box;min-height:350px;padding:65px 28px;text-align:center;background:radial-gradient(ellipse at center,#f4eedfcc,#f4eedff5),url('/recap/paris-scrapbook-map.webp') center/cover;color:#243d30}
+.archive-loading .archive-loading-eyebrow{font:10px/1.6 monospace;letter-spacing:.12em}
+.archive-loading h2{font:clamp(38px,6vw,64px)/1.2 Georgia,serif;margin:18px 0}.archive-loading h2 em{color:#b84a31}
+.archive-loading p{max-width:400px;margin:0 auto 24px;font-size:17px;line-height:1.6}
+.archive-loading>a{display:inline-flex;align-items:center;gap:25px;padding:14px 22px;border:1px solid #b84a31;text-decoration:none;color:inherit}
+
+.recap .scrapbook-chart .chart-insights{display:grid;grid-template-columns:auto auto minmax(90px,140px);column-gap:22px;row-gap:12px;max-width:100%;box-sizing:border-box}
+.chart-insights .chart-comparison{grid-column:1/-1;border-top:1px dashed #a9782d66;padding-top:12px;font:14px/1.5 var(--font-degular),sans-serif;text-align:center}
+@media(max-width:600px){.recap .scrapbook-chart .chart-insights{grid-template-columns:auto 1fr;gap:8px 16px;width:100%;padding:18px}.chart-insights>span:first-child{grid-column:1/-1}.scrapbook-chart .chart-insights>strong{font-size:42px}.scrapbook-chart .chart-insights>small{max-width:130px;text-align:left}.chart-insights .chart-comparison{font-size:13px}}
+
+.chart-insights>strong{grid-column:auto;grid-row:auto}
+@media(max-width:600px){.chart-insights>span:first-child{grid-row:1}.chart-insights>strong{grid-column:1;grid-row:2}.chart-insights>small{grid-column:2;grid-row:2}.chart-insights .chart-comparison{grid-row:3}}
+
+/* A one-shot journey through the weekend; direct input always takes control. */
+.chart-traveller{transition:transform 550ms cubic-bezier(.22,.8,.3,1)}
+.chart-arrival{--impact-scale:1.5;--ripple-scale:2.7}
+.chart-arrival-peak{--impact-scale:1.9;--ripple-scale:3.5}
+.chart-arrival .chart-impact{fill:#b84a31;stroke:#f4eedf;stroke-width:4;animation:chart-impact .65s ease-out both;transform-box:fill-box;transform-origin:center}
+.chart-arrival .chart-ripple{fill:none;stroke:#b84a31;stroke-width:2;animation:chart-ripple .9s ease-out both;transform-box:fill-box;transform-origin:center}
+@keyframes chart-impact{0%{transform:scale(.7)}35%{transform:scale(var(--impact-scale))}65%{transform:scale(.9)}100%{transform:scale(1)}}
+@keyframes chart-ripple{from{opacity:.85;transform:scale(.8)}to{opacity:0;transform:scale(var(--ripple-scale))}}
+@media(prefers-reduced-motion:reduce){.chart-traveller{transition:none}.chart-arrival{display:none}}
+
+.chart-traveller-start{transition:none}
+
+.recap-genres .genre-line{transition-delay:550ms;transition-duration:1050ms}
+
+/* Give the small-screen map a readable route and separate space for its ephemera. */
+.recap-route .route-energy{stroke:var(--coral);stroke-width:3.5}
+.chart-guide-slide{transform-origin:0 0;transition:transform 550ms cubic-bezier(.22,.8,.3,1)}
+.chart-guide-start{transition:none}
+@media(max-width:760px){
+ .recap-hero{padding-bottom:75px;min-height:0}
+ .hero-atlas{position:relative;inset:auto;height:630px;margin:35px -8px 0;width:calc(100% + 16px)}
+ .hero-atlas-heading{top:5px;left:8px}
+ .hero-atlas .hero-postmark{width:80px;height:80px;top:0;right:8px}
+ .hero-atlas .hero-trace{top:105px;right:0;width:100%;height:330px;transform:none}
+ .hero-atlas .hero-trace .trace{stroke-width:2.8}
+ .hero-atlas .route-stop text{font-size:22px}
+ .hero-map-note{top:440px;bottom:auto;left:8px;max-width:none;font-size:19px;white-space:nowrap;transform:rotate(-3deg)}
+ .hero-atlas .recap-ticket{bottom:12px;right:14px;max-width:calc(100% - 28px)}
+}
+@media(prefers-reduced-motion:reduce){.chart-guide-slide{transition:none}}
+
+/* Reserve the full heading's layout while its letters type into place. */
+@media(prefers-reduced-motion:no-preference){
+ .recap-ending-copy.will-reveal{opacity:1;transform:none;transition:none}
+}
+
+
+/* More room for the route to end before the keepsake ticket begins. */
+@media(min-width:761px){
+ .recap-hero{min-height:920px}
+ .hero-atlas .hero-trace{top:145px;height:480px;width:85%}
+ .hero-atlas .recap-ticket{bottom:85px;right:10%}
+ .hero-map-note{bottom:255px;left:10%}
+ .response-dispatch{display:grid;grid-template-columns:1fr auto;row-gap:14px}
+ .response-dispatch>span:nth-child(2){grid-column:1/-1;grid-row:2;justify-self:start;font-size:24px;padding:4px 0 10px;transform:rotate(-2deg)}
+ .response-dispatch>span:last-child{grid-column:2;grid-row:1}
+}
+@media(max-width:760px) and (prefers-reduced-motion:no-preference){
+ @supports(animation-timeline:view()){
+  .hero-atlas{view-timeline-name:--mobile-map;view-timeline-axis:block}
+  .hero-atlas .hero-trace.is-in-view .route-energy{animation:mobile-route-ink linear both;animation-timeline:--mobile-map;animation-range:entry 15% exit 65%}
+  @keyframes mobile-route-ink{0%{stroke-dashoffset:.14;opacity:0}8%{opacity:1}92%{opacity:1}100%{stroke-dashoffset:-1;opacity:0}}
+ }
+}
+
+/* Decorative playback motion follows the audio state, without audio analysis. */
+.recap-waveform i{position:relative}
+@media(prefers-reduced-motion:no-preference){
+ .recap-waveform.is-in-view i:nth-child(n+34):nth-child(-n+47)::after{content:"";position:absolute;inset:0;background:var(--coral);opacity:0;animation:wave-finishing-beat 2.4s linear 2.1s both;transform-origin:center}
+ @keyframes wave-finishing-beat{
+ 0%{opacity:0;transform:scaleY(1);animation-timing-function:cubic-bezier(.18,.6,.2,1)}
+ 36%{opacity:.9;transform:scaleY(var(--wave-stretch,1.7));animation-timing-function:ease-out}
+ 45%{opacity:1;transform:translateX(0) scaleY(calc(var(--wave-stretch,1.7) + .08))}
+ 48%{transform:translateX(-1px) scaleY(calc(var(--wave-stretch,1.7) + .1))}
+ 51%{transform:translateX(1px) scaleY(calc(var(--wave-stretch,1.7) + .06))}
+ 54%{transform:translateX(-.6px) scaleY(calc(var(--wave-stretch,1.7) + .1))}
+ 58%{transform:translateX(.6px) scaleY(calc(var(--wave-stretch,1.7) + .08))}
+ 65%{opacity:1;transform:translateX(0) scaleY(calc(var(--wave-stretch,1.7) + .1));animation-timing-function:cubic-bezier(.7,0,.85,.25)}
+ 76%{opacity:.8;transform:scaleY(.65);animation-timing-function:cubic-bezier(.15,.65,.3,1)}
+ 86%{opacity:.5;transform:scaleY(1.15);animation-timing-function:ease-in-out}
+ 94%{opacity:.2;transform:scaleY(.96);animation-timing-function:ease-out}
+ 100%{opacity:0;transform:scaleY(1)}
+}
+ .recap-sound:has(.recap-player[data-wave-active="true"]) .recap-waveform i{animation:wave-playing 1.05s ease-in-out infinite alternate;animation-delay:-.3s}
+ .recap-sound:has(.recap-player[data-wave-active="true"]) .recap-waveform i:nth-child(3n){animation-duration:.73s;animation-delay:-.5s}
+ .recap-sound:has(.recap-player[data-wave-active="true"]) .recap-waveform i:nth-child(4n){animation-duration:1.37s;animation-delay:-.8s}
+ .recap-sound:has(.recap-player[data-wave-active="true"]) .recap-waveform i:nth-child(5n){animation-duration:.91s;animation-delay:-.15s}
+ @keyframes wave-playing{0%{transform:scaleY(.45);background:var(--ink)}45%{transform:scaleY(1.08);background:var(--ink)}100%{transform:scaleY(.75);background:var(--coral)}}
+}
+
+/* Each typed character briefly owns the caret, including across wrapped lines. */
+@media(prefers-reduced-motion:no-preference){
+}
+
+.terminal-word{display:inline-block;white-space:pre}.terminal-letter{position:relative}
+.terminal-caret{position:absolute;left:100%;top:.14em;width:max(2px,.018em);height:.78em;background:var(--coral);pointer-events:none}
+.terminal-caret.at-start{left:0}.terminal-caret.is-finished{animation:terminal-blink 1.1s step-end infinite}
+@keyframes terminal-blink{0%,45%{opacity:1}46%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.terminal-caret{display:none}}
+.terminal-letter{display:inline-block;vertical-align:baseline}
+
+/* Uneven tension across the crest gives the recoil a changing silhouette. */
+.recap-waveform i:nth-child(3n){--wave-stretch:1.45}
+.recap-waveform i:nth-child(3n+1){--wave-stretch:1.85}
+.recap-waveform i:nth-child(3n+2){--wave-stretch:1.65}
+.recap-waveform.is-in-view i:nth-child(n+34):nth-child(-n+47)::after{animation-delay:2.1s}
+.recap-waveform.is-in-view i:nth-child(n+34):nth-child(-n+47):nth-child(3n)::after{animation-duration:2.48s}
+.recap-waveform.is-in-view i:nth-child(n+34):nth-child(-n+47):nth-child(3n+2)::after{animation-duration:2.32s}
+/* Fade the outer bars without clipping the stretched peaks vertically. */
+.recap-waveform{mask-image:none}
+.recap-waveform i:nth-child(-n+8),.recap-waveform i:nth-last-child(-n+8){opacity:.25}
+.recap-waveform i:nth-child(n+9):nth-child(-n+15),.recap-waveform i:nth-last-child(n+9):nth-last-child(-n+15){opacity:.4}
+
+/* Give the first chapter a distinct, visible editorial entrance. */
+@media(prefers-reduced-motion:no-preference){
+ .recap-guide .recap-split.will-reveal{opacity:1;transform:none}
+ .recap-guide .recap-split.will-reveal>h2,.recap-guide .recap-split.will-reveal>.recap-prose{opacity:0;translate:0 24px;transition:opacity .9s ease,translate .9s cubic-bezier(.16,1,.3,1)}
+ .recap-guide .recap-split.will-reveal>.recap-prose{transition-delay:220ms}
+ .recap-guide .recap-split.is-in-view>h2,.recap-guide .recap-split.is-in-view>.recap-prose{opacity:1;translate:0 0}
+ .recap-guide .recap-print-stats.will-reveal dt svg{scale:.65;rotate:-12deg;opacity:0;transition:scale .7s cubic-bezier(.2,1.4,.4,1),rotate .7s,opacity .5s}
+ .recap-guide .recap-print-stats.is-in-view dt svg{scale:1;rotate:0deg;opacity:1}
+ .recap-guide .recap-stat-grid>div:nth-child(2) svg{transition-delay:100ms}
+ .recap-guide .recap-stat-grid>div:nth-child(3) svg{transition-delay:200ms}
+ .recap-guide .recap-stat-grid>div:nth-child(4) svg{transition-delay:300ms}
+}
+
+/* A perforated keepsake, carried through from the cover ticket. */
+.recap-guide .recap-print-stats{padding:32px 26px 34px;background:linear-gradient(110deg,#fff9e875,transparent 65%),url('/recap/paper-grain.svg');border:1px solid #a9782d40;border-top:1px dashed #a9782d80;border-bottom:1px dashed #a9782d80;box-shadow:0 5px 12px -9px #59452f80}
+.recap-guide .recap-print-stats::before{content:"";position:absolute;top:-13px;left:46%;width:86px;height:25px;background:#cfb57855;border-inline:1px dashed #fff9e880;rotate:-4deg;pointer-events:none}
+.recap-guide .recap-postmark{right:24px}
+.recap-guide .recap-stat-grid>div:last-child{border-right:0}
+.recap-guide .recap-infinity{display:block;width:1.55em;height:1.3em;color:var(--coral);margin:.08em auto}
+@media(max-width:1000px){.recap-guide .recap-postmark{right:auto}}
+@media(max-width:760px){.recap-guide .recap-print-stats{padding:28px 12px 25px}.recap-guide .recap-stat-grid>div{padding-inline:8px}.recap-guide .recap-print-heading{margin-left:8px}.recap-guide .recap-stat-grid dd{font-size:clamp(42px,12vw,58px)}}
+
+@media(max-width:760px){
+ .recap-guide .recap-print-stats{margin-inline:-12px;padding:26px 10px 22px}
+ .recap-guide .recap-print-heading{margin-bottom:28px;font-size:14px}
+ .recap-guide .recap-stat-grid{row-gap:20px}
+ .recap-guide .recap-stat-grid>div:nth-child(n+3){padding-top:20px}
+ .recap-guide .recap-stat-grid dt svg{width:28px;height:28px;margin-bottom:10px}
+ .recap-guide .recap-stat-grid dt span{font-size:11px;line-height:1.5;letter-spacing:.025em}
+ .recap-guide .recap-stat-grid dd{margin-bottom:8px}
+ .recap-guide .recap-postmark{margin-top:26px}
+}
+
+/* Genre names enter along the same axis as their meter, with totals anchored. */
+@media(prefers-reduced-motion:no-preference){
+ .recap .recap-genres li.will-reveal{opacity:1;transform:none;transition:none}
+ .recap-genres .will-reveal .genre-name{opacity:0;translate:-20px 0;transition:translate .7s cubic-bezier(.16,1,.3,1),opacity .35s ease}
+ .recap-genres .is-in-view .genre-name{opacity:1;translate:0 0}
+}
+
+.recap-inline-icon{display:inline-block;width:1em;height:1em;vertical-align:-.125em;flex-shrink:0}

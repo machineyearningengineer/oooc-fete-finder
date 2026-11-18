@@ -8,6 +8,9 @@ import { buildSiteUrl } from "@/lib/site-url";
 type OGImageVariant = "default" | "event-modal";
 type LegacyTheme = "default" | "event" | "admin" | "custom";
 export type OGPreset =
+	| "recap"
+	| "archive"
+	| "terms"
 	| "home"
 	| "how-it-works"
 	| "privacy"
@@ -20,6 +23,9 @@ export type OGPreset =
 	| "plans";
 
 const STATIC_OG_IMAGE_BY_PRESET: Record<OGPreset, string> = {
+	recap: "/og/recap.png",
+	archive: "/og/archive.png",
+	terms: "/og/terms.png",
 	home: "/og/home.png",
 	"how-it-works": "/og/how-it-works.png",
 	privacy: "/og/privacy.png",
@@ -52,6 +58,8 @@ type SharedPlanOGImageParams = {
 	planVersion?: string;
 };
 
+export const OG_DESIGN_REVISION = "20260905-atlas-1";
+
 const getOGImageVersion = (): string =>
 	(
 		process.env.NEXT_PUBLIC_OG_IMAGE_VERSION ||
@@ -62,7 +70,9 @@ const getOGImageVersion = (): string =>
 const applyOGImageVersion = (searchParams: URLSearchParams): void => {
 	const version = getOGImageVersion();
 	if (version) {
-		searchParams.set("v", version);
+		searchParams.set("v", `${OG_DESIGN_REVISION}.${version}`);
+	} else {
+		searchParams.set("v", OG_DESIGN_REVISION);
 	}
 };
 
@@ -198,7 +208,7 @@ export const generateOGMetadata = (params: {
 		}),
 		openGraph: {
 			type: "website" as const,
-			locale: "en_US",
+			locale: "en_GB",
 			url,
 			title: params.title,
 			description: params.description,

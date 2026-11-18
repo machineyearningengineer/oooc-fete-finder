@@ -51,14 +51,14 @@
 		"Times New Roman", Times, serif;
 	--ooo-font-mono: ui-monospace, "SFMono-Regular", "SF Mono", Consolas,
 		"Liberation Mono", Menlo, monospace;
-	--ooo-grain-image: url("/grain.png");
+	--ooo-grain-image: url("/recap/paper-grain.svg");
 	--ooo-grain-opacity: 0.055;
 	--ooo-surface-alpha: 0.76;
 	--ooo-surface-soft-alpha: 0.58;
-	--background: oklch(0.973 0.012 82);
-	--foreground: oklch(0.24 0.02 56);
-	--card: oklch(0.988 0.007 82);
-	--card-foreground: oklch(0.24 0.02 56);
+	--background: #f4eedf;
+	--foreground: #243d30;
+	--card: #faf6ec;
+	--card-foreground: #243d30;
 	--popover: oklch(0.988 0.007 82);
 	--popover-foreground: oklch(0.24 0.02 56);
 	--primary: oklch(0.31 0.03 48);
@@ -800,3 +800,9 @@ body[data-ticket-exchange-modal-open="true"] .ooo-mobile-bottom-nav-shell {
 		transform: translate3d(0, 0, 0);
 	}
 }
+
+/* The archive shares the recap's printed editorial hierarchy. */
+.ooo-page-intro { margin-block: 1rem 2.5rem; padding-block: 1rem 2rem; border-bottom: 1px solid var(--border); max-width: 60rem; }
+.ooo-page-intro h1 { margin-block: .75rem 1.25rem; font-family: var(--ooo-font-display); font-size: clamp(2rem, 5vw, 4rem); line-height: 1.2; text-wrap: balance; }
+.ooo-page-intro p { max-width: 42rem; line-height: 1.7; }
+.ooo-page-eyebrow { font-size: .75rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-foreground); }

@@ -14,6 +14,7 @@ const basePath = getBasePath();
 
 export const metadata: Metadata = generateOGMetadata({
 	title: "Submit Event",
+	noIndex: isArchiveModeEnabled(),
 	description:
 		"Submit your event to Out Of Office Collective with only the essential details. Our team reviews every submission before publishing.",
 	ogImageUrl: generatePresetOGImage("submit-event"),
