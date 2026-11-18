@@ -5,7 +5,6 @@ import {
 	ArrowRight,
 	Asterisk,
 	Heart,
-	Infinity as InfinityIcon,
 	MapPin,
 	Moon,
 	Ticket,
@@ -101,21 +100,21 @@ export function RecapStory() {
 				<div className="recap-hero-copy">
 					<p className="recap-eyebrow">FÊTE FINDER / THE 2026 RECAP</p>
 					<h1>
-						One city.
-						<br />A thousand
+						We made
+						<br />a list for
 						<br />
-						<em>ways inside.</em>
+						<em>the group chat.</em>
 					</h1>
 					<p className="recap-opening">
-						A group chat became a guide.
-						<br />
-						You turned it into a weekend.
+						Then it got passed round. By the end of June it had{" "}
+						{number(recap.pageViews)} page views and{" "}
+						{number(recap.outboundClicks)} clicks through to the parties.
 					</p>
 					<a className="recap-scroll" href="#the-guide">
 						<span aria-hidden="true">
 							<ArrowDown className="recap-inline-icon" />
 						</span>{" "}
-						Open the scrapbook
+						See how it went
 					</a>
 				</div>
 				<div className="hero-atlas">
@@ -144,14 +143,14 @@ export function RecapStory() {
 					</svg>
 					<RouteTrace className="hero-trace" />
 					<p className="hero-map-note" aria-hidden="true">
-						We took the long way.
+						Stop 4: TBC.
 					</p>
 					<a
 						className="recap-ticket"
 						href="#the-guide"
 						aria-label="Explore the Fête Finder 2026 recap"
 					>
-						<span>YOUR WEEKEND, KEPT FOREVER</span>
+						<span>19–22 JUIN · 159 LISTINGS</span>
 						<strong>FÊTE FINDER</strong>
 						<span>PARIS · 2026 · THE RECAP</span>
 						<i>
@@ -161,8 +160,8 @@ export function RecapStory() {
 					</a>
 				</div>
 				<div className="recap-hero-footer">
-					<span>THE CITY WAS THE DANCE FLOOR.</span>
-					<span>THE GUIDE WAS YOUR WAY IN.</span>
+					<span>FROM THE OOOC GROUP CHAT</span>
+					<span>TO 159 PARTIES IN PARIS</span>
 				</div>
 			</header>
 
@@ -172,7 +171,7 @@ export function RecapStory() {
 				aria-labelledby="guide-title"
 			>
 				<div className="recap-section-label">
-					<span>01 / FIND YOUR PEOPLE</span>
+					<span>01 / WHY IT EXISTS</span>
 					<span>THE GUIDE</span>
 				</div>
 				<div className="recap-split" data-reveal>
@@ -185,26 +184,26 @@ export function RecapStory() {
 					</h2>
 					<div className="recap-prose">
 						<p>
-							Not another endless list. A little street companion for the
-							questions that actually matter.
+							Every Fête, the chat asks the same things. Is it free? Is it near
+							us? Is anything still on after midnight?
 						</p>
 						<p>
-							What’s free? What’s close? What’s still going when we’re not quite
-							ready to go home?
+							So we put the answers in one place, instead of a pile of
+							screenshots.
 						</p>
 						<span className="recap-handwritten">
-							A good plan leaves room for a detour.
+							The plan will still change at 1am.
 						</span>
 					</div>
 				</div>
 				<div className="recap-print-stats" data-reveal>
-					<p className="recap-print-heading">By the numbers</p>
+					<p className="recap-print-heading">The 2026 guide</p>
 					<dl className="recap-stat-grid">
 						{[
 							{
 								Icon: Ticket,
 								value: recap.catalog.events,
-								label: "2026 listings",
+								label: "Listings",
 							},
 							{
 								Icon: Heart,
@@ -214,12 +213,12 @@ export function RecapStory() {
 							{
 								Icon: Moon,
 								value: recap.catalog.lateNightEvents,
-								label: "Late-night options",
+								label: "Late ones (10pm+ or past midnight)",
 							},
 							{
-								Icon: Heart,
-								value: null,
-								label: "Memories made",
+								Icon: MapPin,
+								value: recap.catalog.eventsWithLocation,
+								label: "With a pin on the map",
 							},
 						].map(({ Icon, value, label }, i) => (
 							<div key={label}>
@@ -228,16 +227,7 @@ export function RecapStory() {
 									<span>{label}</span>
 								</dt>
 								<dd>
-									{value === null ? (
-										<InfinityIcon
-											className="recap-infinity"
-											role="img"
-											aria-label="Countless"
-											strokeWidth={1.15}
-										/>
-									) : (
-										<RecapNumber value={value} duration={750} delay={i * 100} />
-									)}
+									<RecapNumber value={value} duration={750} delay={i * 100} />
 								</dd>
 							</div>
 						))}
