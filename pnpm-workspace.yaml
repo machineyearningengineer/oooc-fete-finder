@@ -1,0 +1,11 @@
+overrides:
+  postcss: 8.5.10
+  protocol-buffers-schema: 3.6.1
+
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true
+  sharp: true
+
+minimumReleaseAgeExclude:
+  - '@kitlangton/rolling-number@0.3.0'

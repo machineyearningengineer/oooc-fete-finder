@@ -1,8 +1,9 @@
 import Header from "@/components/Header";
+import { getPublicSlidingBannerSettingsCached } from "@/features/site-settings/queries";
 import { getTicketExchangeSession } from "@/features/ticket-exchange/auth";
 import { TicketExchangeShell } from "@/features/ticket-exchange/components/TicketExchangeShell";
 import { getTicketExchangePageModel } from "@/features/ticket-exchange/service";
-import { getPublicSlidingBannerSettingsCached } from "@/features/site-settings/queries";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { buildSiteUrl } from "@/lib/site-url";
 import {
 	generateOGMetadata,
@@ -13,7 +14,8 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = generateOGMetadata({
-	title: "Ticket Exchange | Fete Finder",
+	title: "Ticket Exchange",
+	noIndex: isArchiveModeEnabled(),
 	description:
 		"Find people selling or looking for tickets linked to Fete Finder events. OOOC only connects people; trades happen off-platform.",
 	ogImageUrl: generatePresetOGImage("exchange"),

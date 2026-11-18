@@ -1,6 +1,26 @@
-# Archive mode
+# Archive Mode
 
-Archive mode runs a frozen guide from bundled data. Refresh the event CSV and support snapshots before using it for a production archive. The root Dockerfile builds a separate [holding page](../../railway-placeholder/README.md); enabling archive flags alone does not change that build.
+Archive mode is the production off-season runtime, deployed on 5 September 2026.
+The root page tells the 2026 story, then reveals the finder on scroll or “Skip to
+app”. `/archive` opens the finder directly. Event pages remain addressable.
+
+## Snapshot provenance
+
+The event CSV and bundled map, route, and settings data were compared against
+`oooc-fete-finder-postgres-20260703T095743Z.dump`, the latest available local
+production backup. Their contents matched; support export timestamps were
+refreshed. This verifies the archive against the 3 July backup, not against the
+currently stopped production database volume.
+
+The recap contains 159 dated 2026 listings and aggregate June analytics. Save
+counts are save/unsave actions, genre counts are listing tags, and activity is
+recorded actions rather than unique people. Repeated genre tags within one
+listing are counted once. No user or session rows are published.
+
+To regenerate recap aggregates against an isolated restored backup, set
+`DATABASE_URL` and a descriptive `RECAP_SOURCE`, then run
+`node scripts/generate-static-recap.mjs`. Review `data/recap-2026.json` before
+publishing. Backup dumps are excluded from Docker and Railway uploads.
 
 ## Flags
 
@@ -12,12 +32,12 @@ NEXT_PUBLIC_ARCHIVE_MODE=false
 NEXT_PUBLIC_ANALYTICS_ENABLED=true
 ```
 
-To enable the archive later, set both archive flags to `true`. `ARCHIVE_MODE`
+The production Docker build sets both archive flags to `true`. `ARCHIVE_MODE`
 controls server behavior, and `NEXT_PUBLIC_ARCHIVE_MODE` controls bundled
 client behavior. `ARCHIVE_MODE=true` forces event reads to the bundled CSV even
 if `DATA_MODE=remote` remains set.
 
-## What still works
+## What Still Works
 
 - Public event browsing, search, filters, maps, event detail pages, and static
   assets.
@@ -33,7 +53,7 @@ if `DATA_MODE=remote` remains set.
   and archive behavior.
 - Local app settings, theme, and map preference controls.
 
-## What is disabled
+## What Is Disabled
 
 - Login, user sessions, saved-account data, user app-setting sync, notices, and
   saved event sync.
@@ -46,7 +66,7 @@ if `DATA_MODE=remote` remains set.
   webhook ingestion, cron database maintenance, and Ticket Exchange bot writes.
 - Full admin dashboard and admin write workflows.
 
-## Enable checklist
+## Refresh Checklist
 
 1. Refresh `data/events.csv` from production while Postgres is still connected:
 
@@ -77,8 +97,8 @@ NEXT_PUBLIC_ANALYTICS_ENABLED=false
 NEXT_TELEMETRY_DISABLED=1
 ```
 
-5. Leave `DATA_MODE=remote` to retain the configured live data mode, or set
-   `DATA_MODE=local` for clarity. Archive mode forces local reads either way.
+5. Set `DATA_MODE=local`. Archive mode forces local reads and disables the
+   Postgres client even if database credentials remain configured.
 6. After deploy, check `/admin`, `/exchange`, `/plans`, `/plans/fete`,
    `/submit-event`, and
    `/feature-event`.
@@ -86,7 +106,7 @@ NEXT_TELEMETRY_DISABLED=1
    after exporting a backup. Keep the Railway database only if you still need
    admin/history access.
 
-## Login behavior
+## Login Behavior
 
 Archive mode treats every visitor as signed out. The client auth provider clears
 offline auth grace, does not fetch a live session, and hides login/logout/admin
@@ -95,6 +115,54 @@ signed-out response with `archiveMode: true` and clears the user auth cookie.
 Lookup and verification endpoints return archive-disabled errors, so no login
 codes are sent or accepted.
 
-## Restore live mode
+## Hosting and verification
 
-Build and deploy the Next.js app with both archive flags `false` and analytics enabled at build time and runtime. Restore `DATA_MODE=remote` and the live Postgres service, then verify login, admin, exchange, and required cron jobs. Public environment flags are bundled during the build; changing runtime variables alone is insufficient.
+Public home, archive, and event pages are pre-rendered with a 30-minute
+revalidation interval. Maps load only when expanded. The story uses CSS and
+IntersectionObserver, respects reduced motion, and loads its optional soundtrack
+only on request. Local saved events and routes work without requiring login.
+
+Railway serverless remains enabled. All four maintenance cron schedules are
+paused; `config/railway-cron-services.json` records `enabled: false` while
+retaining their intended live-season schedules. The database has no running
+deployment; its backup and retained storage have not been deleted. The app still
+has a Next.js runtime, so this is not zero-compute static hosting. Local container
+smoke testing measured approximately 200 MiB resident memory; actual Railway
+usage depends on traffic and sleeping behavior.
+
+Release verification: 27 focused tests, changed-file lint, TypeScript and
+production builds, database-free Docker smoke tests, desktop/mobile interaction
+checks, reduced motion, and public-domain HTTP checks. Home, archive, and event
+responses returned cache HIT. Full repository suites were deferred to CI.
+
+## Restore the live season
+
+Rebuild with both archive flags false and analytics enabled **at build time and
+runtime**. The current root Dockerfile explicitly builds an archive image;
+changing Railway runtime variables alone cannot undo bundled public flags or
+pre-rendered output. Adapt those Dockerfile build settings for a live release,
+restore `DATA_MODE=remote`, start Postgres, and validate auth/admin/write flows.
+Only then restore required cron schedules and set their manifest entries enabled.
+The previous Caddy placeholder remains in `railway-placeholder/` as source for a
+minimal fallback, but the root Dockerfile no longer builds it.
+
+## Design revision — 20260905-atlas-1
+
+The public page palette and archive introduction now carry the recap's warm paper
+and forest ink. All 13 static Open Graph cards and dynamic event/shared-plan cards
+share a printed-atlas frame. Recap, archive and terms have separate artwork and
+metadata. Image URLs include the design revision as well as any configured
+release version, so a stale environment version cannot hide a design update.
+
+The renderer measures actual bundled font bounds to fit titles, subtitles and
+metadata within their columns. Long unbroken titles wrap and omitted content is
+marked with an ellipsis. Regenerate static artwork with `pnpm generate:og` after
+changing its template.
+
+Verification: 20 focused OG layout, URL, route and SEO tests; supported changed-file
+lint; JavaScript syntax checks; TypeScript and an archive production build. Browser
+checks covered 12 public routes at 390px with no horizontal overflow, desktop and
+dark archive layouts, recap day selection with reduced motion, and a real event's
+metadata. Static cards and dynamic event/plan images were visually inspected.
+These checks cover the shared presentation and metadata boundaries. Full test,
+coverage and repository-wide lint suites are deferred to CI.

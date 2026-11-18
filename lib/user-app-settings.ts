@@ -24,7 +24,7 @@ export const DEFAULT_LOCAL_APP_SETTINGS: LocalAppSettings = {
 	hideFloatingPrompts: false,
 	enableHaptics: true,
 	defaultEventSortMode: "upcoming",
-	mapLoadStrategy: "idle",
+	mapLoadStrategy: "expand",
 };
 
 export const DEFAULT_SYNCED_USER_APP_SETTINGS: SyncedUserAppSettings = {

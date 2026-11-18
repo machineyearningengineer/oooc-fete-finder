@@ -1,21 +1,39 @@
+import { OffseasonPlaceholder } from "@/components/OffseasonPlaceholder";
+import { ArchiveReveal } from "@/features/recap/ArchiveExperience";
+import { RecapStory } from "@/features/recap/RecapStory";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
+import { isOffseasonPlaceholderEnabled } from "@/lib/offseason-placeholder";
+import { buildSiteUrl } from "@/lib/site-url";
+import {
+	generateOGMetadata,
+	generatePresetOGImage,
+} from "@/lib/social/og-utils";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { HomeEventsSection } from "./HomeEventsSection";
 import { HomeEventsSectionLoading } from "./HomeEventsSectionLoading";
 import { HomeHeader } from "./HomeHeader";
-import { OffseasonPlaceholder } from "@/components/OffseasonPlaceholder";
-import { isOffseasonPlaceholderEnabled } from "@/lib/offseason-placeholder";
 
-// Keep the HTML/module graph request-scoped; event data is cached separately.
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-const homeMapLoadStrategy: "immediate" | "expand" | "idle" = "idle";
+// Public content is cacheable; account state stays in the client.
+export const revalidate = 1800;
+export const metadata = isArchiveModeEnabled()
+	? generateOGMetadata({
+			title: "Fête de la Musique 2026: Paris Recap & Guide",
+			description:
+				"Relive Fête de la Musique 2026 in Paris with Out Of Office Collective: the weekend’s music, memories and numbers, plus the archived event guide.",
+			ogImageUrl: generatePresetOGImage("recap"),
+			url: buildSiteUrl("/"),
+		})
+	: {};
+const homeMapLoadStrategy = "expand";
 
-export default function Home() {
+export default async function Home() {
+	if (!isArchiveModeEnabled()) await connection();
 	if (isOffseasonPlaceholderEnabled()) {
 		return <OffseasonPlaceholder />;
 	}
 
-	return (
+	const finder = (
 		<div className="ooo-site-shell">
 			<HomeHeader />
 			<main
@@ -31,5 +49,13 @@ export default function Home() {
 				</Suspense>
 			</main>
 		</div>
+	);
+	return isArchiveModeEnabled() ? (
+		<>
+			<RecapStory />
+			<ArchiveReveal>{finder}</ArchiveReveal>
+		</>
+	) : (
+		finder
 	);
 }

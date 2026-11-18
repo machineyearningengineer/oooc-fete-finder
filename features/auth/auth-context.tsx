@@ -300,7 +300,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		}
 	};
 	const canUseProtectedDiscovery =
-		isAuthenticated && (authMode === "live" || authMode === "offline-grace");
+		archiveMode ||
+		(isAuthenticated && (authMode === "live" || authMode === "offline-grace"));
 
 	return (
 		<AuthContext.Provider

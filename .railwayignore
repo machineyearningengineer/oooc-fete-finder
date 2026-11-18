@@ -9,3 +9,8 @@ test-results
 *.tsbuildinfo
 service-account.json
 data/local-kv-store.json
+backups
+*.dump
+*.restore-list.txt
+design-references
+.git

@@ -1,5 +1,6 @@
 import type { DateRangeFilter } from "@/features/events/filtering";
 import type { Event } from "@/features/events/types";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 import { isStrictISODate } from "./date-utils";
 import { isEventDiscoverableByDefault } from "./lifecycle";
 
@@ -25,9 +26,11 @@ export const getDiscoveryEligibleEvents = (
 ): Event[] =>
 	events.filter((event) =>
 		event
-			? isEventDiscoverableByDefault(event, {
-					dateRange: options.dateRange,
-					referenceDate: options.referenceDate,
-				})
+			? isArchiveModeEnabled()
+				? isEventInDiscoveryDateRange(event, options.dateRange)
+				: isEventDiscoverableByDefault(event, {
+						dateRange: options.dateRange,
+						referenceDate: options.referenceDate,
+					})
 			: false,
 	);

@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+node_modules
+.next
+backups
+*.dump
+*.restore-list.txt
+design-references
+railway-placeholder
+coverage
+test-results
+.vercel
+.DS_Store
+*.tsbuildinfo
+service-account.json
+data/local-kv-store.json

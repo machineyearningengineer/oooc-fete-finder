@@ -21,7 +21,7 @@ export const metadata: Metadata = generateOGMetadata({
 	title: "Terms",
 	description:
 		"Terms for using Fete Finder and the OOOC Ticket Exchange community board.",
-	ogImageUrl: generatePresetOGImage("privacy"),
+	ogImageUrl: generatePresetOGImage("terms"),
 	url: buildSiteUrl("/terms"),
 });
 

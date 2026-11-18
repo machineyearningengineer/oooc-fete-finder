@@ -1,4 +1,5 @@
 "use client";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 
 import {
 	Accordion,
@@ -541,8 +542,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 
 		return (
 			<div className="rounded-lg border border-border/70 bg-muted/35 px-3 py-2 text-[11px] leading-relaxed text-muted-foreground lg:text-[10px]">
-				Showing live and upcoming events by default. Use the {archiveYear}{" "}
-				archive or All dates to browse past season events.
+				{isArchiveModeEnabled() ? (
+					"Browsing the archived season. These events have ended. Use All dates to explore earlier years."
+				) : (
+					<>
+						Showing live and upcoming events by default. Use the {archiveYear}{" "}
+						archive or All dates to browse past season events.
+					</>
+				)}
 			</div>
 		);
 	};

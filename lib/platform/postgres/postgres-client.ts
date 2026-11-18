@@ -1,4 +1,5 @@
 import "server-only";
+import { isArchiveModeEnabled } from "@/lib/archive-mode";
 
 import { env } from "@/lib/config/env";
 import { log } from "@/lib/platform/logger";
@@ -23,11 +24,14 @@ const parseBoundedInt = (
 };
 
 export const isPostgresConfigured = (): boolean => {
-	return Boolean(env.DATABASE_URL && env.DATABASE_URL.trim().length > 0);
+	return (
+		!isArchiveModeEnabled() &&
+		Boolean(env.DATABASE_URL && env.DATABASE_URL.trim().length > 0)
+	);
 };
 
 export const getPostgresClient = (): Sql | null => {
-	if (process.env.NEXT_RUNTIME === "edge") {
+	if (isArchiveModeEnabled() || process.env.NEXT_RUNTIME === "edge") {
 		return null;
 	}
 

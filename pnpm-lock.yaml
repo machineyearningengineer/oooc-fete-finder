@@ -15,6 +15,9 @@ importers:
       '@base-ui/react':
         specifier: ^1.2.0
         version: 1.2.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@kitlangton/rolling-number':
+        specifier: ^0.3.0
+        version: 0.3.0(react@19.2.4)
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
@@ -595,6 +598,17 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@kitlangton/rolling-number@0.3.0':
+    resolution: {integrity: sha512-+uM1KgKpMIfL+5OVW6u6IMRSZyuEsXMXw1ZQoWcOW0Vmz+b3j6Sh51etLPtT5KIz9zxYF26PMwEKXErlKt7a3g==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      solid-js: ^1.9.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      solid-js:
+        optional: true
 
   '@mapbox/geojson-rewind@0.5.2':
     resolution: {integrity: sha512-tJaT+RbYGJYStt7wI3cq4Nl4SXxG8W7JDG5DMJu97V25RnbNg3QtQtf+KD+VLjNpWKYsRvXDNmNrBgEETr1ifA==}
@@ -2352,6 +2366,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@kitlangton/rolling-number@0.3.0(react@19.2.4)':
+    optionalDependencies:
+      react: 19.2.4
 
   '@mapbox/geojson-rewind@0.5.2':
     dependencies:

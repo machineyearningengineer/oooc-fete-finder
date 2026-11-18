@@ -1,4 +1,5 @@
 "use client";
+import { getFinderHomePath } from "@/lib/archive-mode";
 
 import { useOptionalAuth } from "@/features/auth/auth-context";
 import EventModal from "@/features/events/components/EventModal";
@@ -86,7 +87,7 @@ function EventShareModal({
 			eventUpdateRequestsEnabled &&
 			searchParams.get(REQUEST_UPDATE_PARAM) === "1",
 	);
-	const homeHref = normalizeBasePath(basePath) || "/";
+	const homeHref = getFinderHomePath();
 
 	useEffect(() => {
 		setHasHydrated(true);
