@@ -29,6 +29,7 @@ Fête Finder turns scattered event information into a guide people can use toget
 | [Admin workflow](operations/admin-workflow.md) | Content, placements, operations, and insights |
 | [Postgres setup and recovery](operations/postgres-setup-and-recovery.md) | Store initialization, backup, and recovery |
 | [Archive mode](operations/archive-mode.md) | Frozen data, disabled writes, and seasonal restoration |
+| [Backups and hosting](operations/backups-and-hosting.md) | Hosting, the R2 database dump, Neon restore, and a later Workers move |
 | [Production readiness](operations/production-readiness.md) | Release checks and cron configuration |
 | [Logging and observability](operations/logging-and-observability.md) | Runtime diagnosis |
 | [Environment variables](reference/environment-variables.md) | Configuration names and requirements |

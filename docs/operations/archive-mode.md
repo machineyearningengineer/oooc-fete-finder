@@ -9,8 +9,10 @@ app”. `/archive` opens the finder directly. Event pages remain addressable.
 The event CSV and bundled map, route, and settings data were compared against
 `oooc-fete-finder-postgres-20260703T095743Z.dump`, the latest available local
 production backup. Their contents matched; support export timestamps were
-refreshed. This verifies the archive against the 3 July backup, not against the
-currently stopped production database volume.
+refreshed. The final dump of the production volume, taken on 18 November 2026,
+has the same row counts as the 3 July backup, so the archive reflects the
+database's final state. Both dumps are in R2: see
+[backups and hosting](backups-and-hosting.md).
 
 The recap contains 159 dated 2026 listings and aggregate June analytics. Save
 counts are save/unsave actions, genre counts are listing tags, and activity is
@@ -68,6 +70,9 @@ if `DATA_MODE=remote` remains set.
 
 ## Refresh Checklist
 
+Production has no database now. Steps 1 and 2 need one connected, such as the
+dump restored as in [backups and hosting](backups-and-hosting.md).
+
 1. Refresh `data/events.csv` from production while Postgres is still connected:
 
 ```bash
@@ -102,9 +107,6 @@ NEXT_TELEMETRY_DISABLED=1
 6. After deploy, check `/admin`, `/exchange`, `/plans`, `/plans/fete`,
    `/submit-event`, and
    `/feature-event`.
-7. If the archive is stable, consider detaching Postgres from the app service
-   after exporting a backup. Keep the Railway database only if you still need
-   admin/history access.
 
 ## Login Behavior
 
@@ -124,8 +126,8 @@ only on request. Local saved events and routes work without requiring login.
 
 Railway serverless remains enabled. All four maintenance cron schedules are
 paused; `config/railway-cron-services.json` records `enabled: false` while
-retaining their intended live-season schedules. The database has no running
-deployment; its backup and retained storage have not been deleted. The app still
+retaining their intended live-season schedules. The Railway database was
+deleted on 18 November 2026, after its final dump was verified in R2. The app still
 has a Next.js runtime, so this is not zero-compute static hosting. Local container
 smoke testing measured approximately 200 MiB resident memory; actual Railway
 usage depends on traffic and sleeping behavior.
@@ -137,14 +139,15 @@ responses returned cache HIT. Full repository suites were deferred to CI.
 
 ## Restore the live season
 
-Rebuild with both archive flags false and analytics enabled **at build time and
-runtime**. The current root Dockerfile explicitly builds an archive image;
-changing Railway runtime variables alone cannot undo bundled public flags or
-pre-rendered output. Adapt those Dockerfile build settings for a live release,
-restore `DATA_MODE=remote`, start Postgres, and validate auth/admin/write flows.
-Only then restore required cron schedules and set their manifest entries enabled.
-The previous Caddy placeholder remains in `railway-placeholder/` as source for a
-minimal fallback, but the root Dockerfile no longer builds it.
+Follow [backups and hosting](backups-and-hosting.md#restore-for-next-season-neon):
+restore the R2 dump into Postgres, rebuild with both archive flags false and
+analytics enabled **at build time and runtime**, set `DATA_MODE=remote` and
+`DATABASE_URL`, and validate auth, admin and write flows. Only then restore the
+cron schedules and set their manifest entries enabled. The root Dockerfile builds
+an archive image, so changing Railway variables alone cannot undo bundled public
+flags or pre-rendered output. The old Caddy placeholder remains in
+`railway-placeholder/` as source for a minimal fallback. The root Dockerfile no
+longer builds it.
 
 ## Design revision — 20260905-atlas-1
 

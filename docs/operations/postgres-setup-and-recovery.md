@@ -45,6 +45,8 @@ For local workflow policy and release fallback refresh steps, see [Local Data Wo
 - Contents: events, placements, paid orders, submissions, settings, and collected emails
 - Retention: newest 30 snapshots; older snapshots are pruned after successful backup/pre-restore snapshot creation
 
+Whole-database dumps are a separate thing from these event-store snapshots. The 2026 season's final dump is in R2: see [backups and hosting](backups-and-hosting.md).
+
 ## Recovery
 
 Fastest recovery:

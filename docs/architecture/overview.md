@@ -62,7 +62,7 @@ Gemini assists draft extraction. Google geocoding resolves venue coordinates. St
 
 ## Seasonal deployment
 
-The Next.js app supports both live and archive behavior. The root Dockerfile serves `railway-placeholder/` with Caddy, a separate lightweight off-season holding page. Running `pnpm dev` starts the full application. A Docker deployment and a local app demo therefore do not necessarily show the same experience.
+The Next.js app supports both live and archive behavior. The root Dockerfile builds it in archive mode, which is what production serves off-season. `railway-placeholder/` keeps a separate Caddy holding page that is no longer built. Running `pnpm dev` follows your local flags, so a local demo and the Docker image only match when both use archive mode.
 
 Confirm the build configuration and running service before making deployment claims; repository support for a mode does not establish that it is deployed.
 

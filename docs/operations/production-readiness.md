@@ -4,11 +4,11 @@ Check the build target before treating a deployment as the full application.
 
 | Target | Build | Live services |
 | --- | --- | --- |
-| Holding page | Root Dockerfile → Caddy | Static files only |
-| Archive app | Next.js build with both archive flags enabled | Bundled events and local browser state |
+| Holding page | `railway-placeholder/` → Caddy (not built by default) | Static files only |
+| Archive app | Root Dockerfile: Next.js build with both archive flags enabled | Bundled events and local browser state |
 | Live app | Next.js build with archive flags disabled | Postgres, auth, admin, and configured integrations |
 
-The repository contains all three paths. The selected deployment configuration determines which one runs. [Archive operations](archive-mode.md) cover the snapshot files and flags; [holding-page notes](../../railway-placeholder/README.md) cover Caddy.
+The repository contains all three paths. Production runs the archive app on Railway. [Archive operations](archive-mode.md) cover the snapshot files and flags, [backups and hosting](backups-and-hosting.md) covers the hosting and the database dump, and the [holding-page notes](../../railway-placeholder/README.md) cover Caddy.
 
 ## Live configuration
 

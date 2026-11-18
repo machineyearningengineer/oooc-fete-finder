@@ -28,7 +28,7 @@ The AI-assisted intake proposes data. The editor decides what is ready to publis
 - **Useful on a phone.** Filters, event details, maps, calendar links, and routes support decisions while moving around the city.
 - **Links that survive edits.** An immutable event key identifies a listing; its title and URL slug can change.
 - **A guide that can recover.** Live reads fall back from Postgres to a database backup, then the bundled CSV. Saved browser snapshots support browsing after a successful online visit; maps still need connectivity.
-- **A season with an ending.** Archive mode preserves a frozen guide with local routes and no account or database writes. It is separate from the lightweight off-season holding page used by the checked-in Dockerfile.
+- **A season with an ending.** Archive mode preserves a frozen guide with local routes and no account or database writes. The checked-in Dockerfile builds it, and it is what production serves now. [Backups and hosting](docs/operations/backups-and-hosting.md) covers where the season's database dump lives and how to restore it.
 
 [Product goals](docs/product/goals.md) · [Architecture](docs/architecture/overview.md)
 
@@ -47,7 +47,7 @@ In `.env.local`, set `DATA_MODE=local`, both `ARCHIVE_MODE` and `NEXT_PUBLIC_ARC
 pnpm dev
 ```
 
-Open [localhost:3000](http://localhost:3000). This runs the Next.js guide; the root Dockerfile currently builds the off-season holding page instead. For authenticated editing and live integrations, use a development Postgres database and the [local data workflow](docs/operations/local-data-workflow.md). See the [environment reference](docs/reference/environment-variables.md) for optional providers.
+Open [localhost:3000](http://localhost:3000). This runs the same Next.js guide that the root Dockerfile builds in archive mode. For authenticated editing and live integrations, use a development Postgres database and the [local data workflow](docs/operations/local-data-workflow.md). See the [environment reference](docs/reference/environment-variables.md) for optional providers.
 
 ## Inside the repo
 
