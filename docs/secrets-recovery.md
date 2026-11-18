@@ -23,8 +23,6 @@ A private journal at `~/.local/state/app-secret-recovery/<Railway-project-id>.js
 
 There is no atomic transaction across Railway and Cloudflare. A failure can leave some consumers updated and others pending; repair the failure and rerun with the same saved replacements. Expect temporary login invalidation, rejected webhook deliveries and unavailable dependent features during cutover. Never generate a second set just because a deploy is queued. Run one recovery process per app at a time. A sibling `.lock` directory enforces this; after a killed process, inspect Railway and the journal before removing that stale lock.
 
-Verify the workflow itself with `pnpm secrets:recover:test`. These tests use fake providers and cover preflight failures, mapping isolation, encryption-root protection, uncertain deploys, runtime mismatch and suppressed subprocess output.
-
 ## Fête Finder consumers
 
 While archive mode is live, the web service holds no vault secrets: the Postgres client, admin, OCR, geocoding, cron, revalidation and ticket-bot paths are all disabled, and each fails closed when its secret is unset. Its `AUTH_SECRET` is a random throwaway that satisfies env validation and is stored nowhere, because archive mode issues no sessions. The manifest therefore sets web `secrets` to `{}` with `deploy: false`; `liveSeasonSecrets` records the mapping to restore and is ignored by the recovery command. To restore the live season, move `liveSeasonSecrets` back to `secrets`, set `deploy: true`, and save a fresh `AUTH_SECRET` in Bitwarden first.

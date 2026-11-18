@@ -55,7 +55,7 @@ Open [localhost:3000](http://localhost:3000). This runs the Next.js guide; the r
 
 [Still diagram](docs/assets/system-map.png) · [Architecture details](docs/architecture/overview.md)
 
-Next.js App Router, React, TypeScript, Tailwind, Postgres, and MapLibre. Vitest and Playwright cover domain logic and browser journeys; Biome checks code style.
+Next.js App Router, React, TypeScript, Tailwind, Postgres, and MapLibre. CI runs Biome, TypeScript, knip and production builds in archive and live modes; there is no automated test suite.
 
 | Area | Responsibility |
 | --- | --- |

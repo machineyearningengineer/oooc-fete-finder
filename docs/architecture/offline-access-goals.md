@@ -29,7 +29,7 @@ Queued local mutations have a separate contract in [offline mutations](../../fea
 
 ## Verification and remaining goals
 
-`e2e/event-routes.spec.ts` contains the browser offline journey. After changing caching, hydration, or auth boundaries, verify an online visit followed by offline hard reload and reconnect in a production build. Unit checks alone cannot establish service worker behavior.
+There is no automated browser test. After changing caching, hydration, or auth boundaries, verify by hand in a production build: an online visit, then an offline hard reload, then reconnect. Unit checks alone cannot establish service worker behavior.
 
 Remaining work is focused hardening:
 

@@ -32,4 +32,4 @@ Use this workflow when the user asks to clean up unused/legacy code, dependencie
 
 - `pnpm deadcode` has no actionable findings (or findings are intentionally ignored).
 - `pnpm deadcode:exports` reviewed for false positives and actionable items cleaned.
-- `pnpm -s exec tsc --noEmit`, `pnpm test`, `pnpm lint`, and `pnpm build` all pass.
+- `pnpm -s exec tsc --noEmit`, `pnpm lint`, and `pnpm build` all pass.

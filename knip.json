@@ -15,7 +15,8 @@
     "duplicates"
   ],
 	"ignoreDependencies": [
-		"@types/geojson"
+		"@types/geojson",
+		"server-only"
 	],
 	"ignore": [
 		"railway-placeholder/public/styles.css"
